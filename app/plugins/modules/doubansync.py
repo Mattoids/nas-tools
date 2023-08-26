@@ -32,7 +32,7 @@ class DoubanSync(_IPluginModule):
     # 主题色
     module_color = "#05B711"
     # 插件版本
-    module_version = "1.0"
+    module_version = "1.1"
     # 插件作者
     module_author = "jxxghp"
     # 作者主页
@@ -573,7 +573,7 @@ class DoubanSync(_IPluginModule):
         获取每一个用户的每一个类型的豆瓣标记
         :return: 搜索到的媒体信息列表（不含TMDB信息）
         """
-        self.info(f"同步方式：{'近期动态' if self._sync_type else '全量同步'}")
+        self.info(f"同步方式：{'近期动态' if self._sync_type == '1' else '全量同步'}")
 
         # 返回媒体列表
         media_list = []
