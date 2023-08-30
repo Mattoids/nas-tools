@@ -5178,7 +5178,7 @@ class WebAction:
         result = RequestUtils(timeout=5).get_res(download_url)
 
         # 将插件存入本地插件库
-        if not result and not result.content:
+        if not result or not result.content:
             return {"code": 1, "msg": "插件下载失败，请检查三方源是否可以正常访问！"}
 
         open(plugin_path, "wb").write(result.content)
