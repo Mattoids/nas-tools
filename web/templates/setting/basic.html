@@ -146,6 +146,18 @@
             </div>
             <div class="row">
               <div class="col-lg">
+                <div class="mb-6">
+                  <label class="form-label">自建OCR服务 <span class="form-help"
+                                                             title="填写后将使用自建的OCR服务进行验证码识别"
+                                                             data-bs-toggle="tooltip">?</span></label>
+                  <div class="input-group input-group-flat">
+                    <input type="text" value="{{ Config.app.ocr_url or '' }}" class="form-control" id="app.ocr_url"
+                           placeholder="http://127.0.0.1:9899/captcha/base64"
+                           autocomplete="off">
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg">
                 <div class="mb-3">
                   <label class="form-label">User-Agent <span class="form-help"
                                                              title="如发现被豆瓣、PT站等封堵，请适当修改此项"
@@ -169,6 +181,14 @@
                   <label class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="app.releases_update_only" {% if Config.app.releases_update_only %}checked{% endif %}>
                     <span class="form-check-label">仅检查Release更新 <span class="form-help" title="开启后，只有Release更新才会有更新提示" data-bs-toggle="tooltip">?</span></span>
+                  </label>
+                </div>
+              </div>
+              <div class="col-lg">
+                <div class="mb-3">
+                  <label class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="app.unofficial_update" {% if Config.app.unofficial_update %}checked{% endif %}>
+                    <span class="form-check-label">检查第三方更新 <span class="form-help" title="开启后，将 Mattoid 的仓库作为更新源。" data-bs-toggle="tooltip">?</span></span>
                   </label>
                 </div>
               </div>
@@ -1149,7 +1169,7 @@
   function save_basic_config(type, flag=true) {
     let params = input_select_GetVal(type);
     if (params["media.category"] === "config") {
-      show_warning_modal("非法二级分类策略名称");
+      show_warning_modal("非法二级分类策略名称")
       return;
     }
     if (flag) {

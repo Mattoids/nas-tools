@@ -1187,6 +1187,8 @@ class WebAction:
         """
         更新
         """
+        # TODO:: 增加更新逻辑
+
         # 升级
         if SystemUtils.is_synology():
             if SystemUtils.execute('/bin/ps -w -x | grep -v grep | grep -w "nastool update" | wc -l') == '0':

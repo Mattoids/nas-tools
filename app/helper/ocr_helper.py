@@ -1,11 +1,12 @@
 import base64
 
 from app.utils import RequestUtils
+from config import Config
 
 
 class OcrHelper:
 
-    _ocr_b64_url = "https://nastool.org/captcha/base64"
+    _ocr_b64_url = "https://movie-pilot.org/captcha/base64"
 
     def get_captcha_text(self, image_url=None, image_b64=None, cookie=None, ua=None):
         """
@@ -15,6 +16,9 @@ class OcrHelper:
         :param cookie: 下载图片使用的cookie
         :param ua: 下载图片使用的ua
         """
+        ocr_url = Config().get_config("app").get("ocr_url")
+        if ocr_url:
+            self._ocr_b64_url = ocr_url
         if image_url:
             ret = RequestUtils(headers=ua,
                                cookies=cookie).get_res(image_url)
