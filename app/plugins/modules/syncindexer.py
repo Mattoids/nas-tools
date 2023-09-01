@@ -7,7 +7,6 @@ from app.utils import RequestUtils
 from app.plugins.modules._base import _IPluginModule
 from jinja2 import Template
 
-
 class SyncIndexer(_IPluginModule):
     # 插件名称
     module_name = "同步索引规则"
@@ -18,7 +17,7 @@ class SyncIndexer(_IPluginModule):
     # 主题色
     module_color = "#02C4E0"
     # 插件版本
-    module_version = "1.3"
+    module_version = "1.2"
     # 插件作者
     module_author = "mattoid"
     # 作者主页
@@ -62,8 +61,9 @@ class SyncIndexer(_IPluginModule):
                                 {
                                     'id': 'sync_type',
                                     'options': {
-                                        '0': 'MoviePilot',
-                                        '1': '自定义'
+                                        '0': '回滚致原版',
+                                        '1': '憨憨',
+                                        '2': '自定义'
                                     },
                                     'default': '0',
                                     'onchange': 'SyncIndexer_type_change(this)'
@@ -143,22 +143,23 @@ class SyncIndexer(_IPluginModule):
 
     @staticmethod
     def get_script():
-        return """
-              var url = 'https://raw.githubusercontent.com/jxxghp/MoviePilot/main/config/sites/user.sites.bin';
-
+        return """            
               // 同步方式切换
               function SyncIndexer_type_change(obj){
-                if ($(obj).val() == '1') {
-                    $('#syncindexer_url').val('');
+                if ($(obj).val() == '0') {
+                    $('#syncindexer_url').val('https://raw.githubusercontent.com/Mattoids/nas-tools-plugin/master/sites/user.sites.bin');
                     $('#syncindexer_url').prop("readonly", false);
-                }else{
-                    $('#syncindexer_url').val(url);
+                } else if ($(obj).val() == '1') {
+                    $('#syncindexer_url').val('https://hhanclub.top/user.sites.bin');
+                    $('#syncindexer_url').prop("readonly", true);
+                } else {
+                    $('#syncindexer_url').val('');
                     $('#syncindexer_url').prop("readonly", true);
                 }
               }
-
+              
               $(function(){
-                    $('#syncindexer_url').val(url);
+                    $('#syncindexer_url').val('https://raw.githubusercontent.com/Mattoids/nas-tools-plugin/master/sites/user.sites.bin');
                     $('#syncindexer_url').prop("readonly", true);
               });
         """
@@ -170,6 +171,13 @@ class SyncIndexer(_IPluginModule):
             self._sync_type = config.get("sync_type")
             self._url = config.get("url")
         if self._enable:
+            self._enable = False
+            self.update_config({
+                "url": self._url,
+                "sync_type": self._sync_type,
+                "enable": self._enable,
+            })
+
             self.__update_history(config)
 
     def get_state(self):
