@@ -56,7 +56,6 @@ class WebUtils:
             releases_update_only = Config().get_config("app").get("releases_update_only")
             version_res = RequestUtils(proxies=Config().get_proxies()).get_res(
                 f"https://raw.githubusercontent.com/Mattoids/nas-tools/master/third_version.py")
-            print(version_res)
             if version_res:
                 ver_json = version_res.json()
                 version = ver_json.get("latest")
