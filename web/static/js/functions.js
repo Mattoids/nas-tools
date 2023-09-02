@@ -357,6 +357,12 @@ function show_user_auth_modal() {
   $("#modal-user-auth").modal("show");
 }
 
+function update_system() {
+  ajax_post("update_system", {}, function (ret) {
+    return ret;
+  });
+}
+
 // 用户认证
 function user_auth() {
   $("#user_auth_btn").text("认证中...").prop("disabled", true);
