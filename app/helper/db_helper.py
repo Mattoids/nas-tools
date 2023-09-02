@@ -2665,7 +2665,6 @@ class DbHelper:
 
     @DbPersist(_db)
     def delete_indexer_custom_site(self, id=None):
-        print(id)
         self._db.query(INDEXERCUSTOMSITE).filter(INDEXERCUSTOMSITE.ID == id).delete()
 
     @DbPersist(_db)

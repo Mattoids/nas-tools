@@ -8,7 +8,7 @@ from app.media.meta import MetaInfo
 from app.utils import StringUtils, ExceptionUtils, SystemUtils, RequestUtils, IpUtils
 from app.utils.types import MediaType
 from config import Config
-from version import APP_VERSION
+from version import APP_VERSION, THIRD_VERSION
 
 
 class WebUtils:
@@ -42,10 +42,15 @@ class WebUtils:
         """
         获取当前版本号
         """
-        commit_id = SystemUtils.execute('git rev-parse HEAD')
-        if commit_id and len(commit_id) > 7:
-            commit_id = commit_id[:7]
-        return "%s %s" % (APP_VERSION, commit_id)
+        third_version = Config().get_config("app").get("third_version")
+        if third_version:
+            version = "%s %s" % (APP_VERSION, THIRD_VERSION)
+        else:
+            commit_id = SystemUtils.execute('git rev-parse HEAD')
+            if commit_id and len(commit_id) > 7:
+                commit_id = commit_id[:7]
+            version = "%s %s" % (APP_VERSION, commit_id)
+        return version
 
     @staticmethod
     def get_latest_version():
