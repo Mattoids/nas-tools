@@ -1187,7 +1187,6 @@ class WebAction:
         """
         更新
         """
-
         third_version = Config().get_config("app").get("third_version")
         if third_version:
             # 获取当前系统根目录
@@ -1215,13 +1214,13 @@ class WebAction:
             PathUtils.del_files(os.path.join(tmp_path_root, "config"))
 
             # 拷贝文件
-            os.system(f"cp -R {tmp_path_root} {root_path}")
+            os.system(f"cp -R {tmp_path_root}/* {root_path}/")
 
             # 安装依赖
             os.system(f'sudo pip install -r {root_path}/requirements.txt')
             # 修复权限
             user_auth = os.stat(root_path)
-            os.chown(f"{root_path}/nas-tools", user_auth.st_uid, user_auth.st_gid)
+            os.chown(f"{root_path}", user_auth.st_uid, user_auth.st_gid)
             # 重启
             self.restart_server()
         # 升级
