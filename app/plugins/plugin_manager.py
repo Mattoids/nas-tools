@@ -46,6 +46,9 @@ class PluginManager:
         if not os.path.exists(self.user_plugin_path):
             os.makedirs(self.user_plugin_path)
         self.system_plugin_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "modules")
+        # windows 可能不存在插件目录，需要进行创建
+        if not os.path.exists(self.system_plugin_path):
+            os.makedirs(self.system_plugin_path)
         if os.path.exists(self.user_plugin_path):
             for plugin_file in PathUtils.get_dir_level1_files(self.user_plugin_path, [".py"]):
                 SystemUtils.copy(plugin_file, self.system_plugin_path)

@@ -5175,9 +5175,9 @@ class WebAction:
 
         # 获取插件安装路径
         plugin_path = Path(importlib.import_module("app.plugins.modules").__path__[0])
-        # windows 可能不存在插件目录，需要进行创建
+        # windows 将插件下载致用户插件目录
         if not os.path.exists(plugin_path):
-            os.makedirs(plugin_path)
+            plugin_path = Config().get_user_plugin_path()
         plugin_file = plugin_path / f"{module_id.lower()}.py"
 
         # 获取插件内容
