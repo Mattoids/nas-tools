@@ -5175,10 +5175,12 @@ class WebAction:
 
         # 获取插件安装路径
         plugin_path = Path(importlib.import_module("app.plugins.modules").__path__[0])
+        user_plugin_path = Config().get_user_plugin_path()
         # windows 将插件下载致用户插件目录
         if not os.path.exists(plugin_path):
             plugin_path = Config().get_user_plugin_path()
-        plugin_file = plugin_path / f"{module_id.lower()}.py"
+        plugin_file = os.path.join(plugin_path, f"{module_id.lower()}.py")
+        user_plugin_file = os.path.join(user_plugin_path, f"{module_id.lower()}.py")
 
         # 获取插件内容
         result = RequestUtils(timeout=5, proxies=Config().get_proxies()).get_res(download_url)
@@ -5187,7 +5189,8 @@ class WebAction:
         if not result or not result.content:
             return {"code": 1, "msg": "插件下载失败，请检查三方源是否可以正常访问！"}
 
-        open(plugin_file, "wb").write(result.content)
+        open(user_plugin_file, "wb").write(result.content)
+        SystemUtils.copy(user_plugin_file, plugin_file)
 
         if file_md5:
             log.info(file_md5)
