@@ -1,1 +1,0 @@
-{"latest": "3.2.3 564b0b8", "link": "https://codeload.github.com/Mattoids/nas-tools/zip/refs/tags/v3.2.3"}

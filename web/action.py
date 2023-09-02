@@ -1188,9 +1188,44 @@ class WebAction:
         更新
         """
         # TODO:: 增加更新逻辑
+        third_version = Config().get_config("app").get("third_version")
+        if third_version:
+            # 获取当前系统根目录
+            root_path = Config().get_root_path()
+            print(root_path)
 
+            # 下载文件临时目录
+            tmp_path = "/tmp/nas-tools"
+            # 文件不存在则创建
+            if not os.path.exists(tmp_path):
+                os.makedirs(tmp_path)
+
+            tmp_path_file = os.path.join(tmp_path, "nas-tools.zip")
+            # 获取版本下载地址
+            version, download_url = WebUtils.get_latest_version()
+            # 开始下载文件
+            result = RequestUtils(timeout=5, proxies=Config().get_proxies()).get_res(download_url)
+            open(tmp_path_file, "wb").write(result.content)
+
+            # 解压文件
+            shutil.unpack_archive(tmp_path_file, tmp_path, format='zip')
+            tmp_path_root = os.path.join(tmp_path, f"nas-tools-{version.split()[0]}")
+
+            # 删除不需要的文件
+            PathUtils.del_files(os.path.join(tmp_path_root, ".github"))
+            PathUtils.del_files(os.path.join(tmp_path_root, "config"))
+
+            # 拷贝文件
+            # os.system(f"cp -R {tmp_path_root} {root_path}")
+
+            # 安装依赖
+            os.system(f'sudo pip install -r {root_path}/requirements.txt')
+            # 修复权限
+            os.system(f'sudo chown -R nt:nt {root_path}/nas-tools')
+            # 重启
+            self.restart_server()
         # 升级
-        if SystemUtils.is_synology():
+        elif SystemUtils.is_synology():
             if SystemUtils.execute('/bin/ps -w -x | grep -v grep | grep -w "nastool update" | wc -l') == '0':
                 # 调用群晖套件内置命令升级
                 os.system('nastool update')
@@ -1222,6 +1257,7 @@ class WebAction:
             os.system('sudo chown -R nt:nt /nas-tools')
             # 重启
             self.restart_server()
+
         return {"code": 0}
 
     @staticmethod
@@ -5220,7 +5256,11 @@ class WebAction:
             return {"code": -1, "msg": "参数错误"}
 
         # 获取插件安装路径
-        plugin_path = Path(importlib.import_module("app.plugins.modules").__path__[0]) / f"{module_id.lower()}.py"
+        user_plugin_path = Config().get_user_plugin_path()
+        system_plugin_path = Path(importlib.import_module("app.plugins.modules").__path__[0])
+
+        user_plugin_file = os.path.join(user_plugin_path, f"{module_id.lower()}.py")
+        system_plugin_file = os.path.join(system_plugin_path, f"{module_id.lower()}.py")
 
         # 用户已安装插件列表
         user_plugins = SystemConfig().get(SystemConfigKey.UserInstalledPlugins) or []
@@ -5231,7 +5271,8 @@ class WebAction:
         if module_id in external_plugins:
             external_plugins.remove(module_id)
             # 删除本地的第三方插件文件
-            os.remove(plugin_path)
+            os.remove(user_plugin_file)
+            os.remove(system_plugin_file)
 
         # 保存配置
         SystemConfig().set(SystemConfigKey.UserInstalledPlugins, user_plugins)
