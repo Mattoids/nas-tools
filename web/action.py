@@ -5174,16 +5174,20 @@ class WebAction:
         external_plugins = SystemConfig().get(SystemConfigKey.ExternalInstalledPlugins) or []
 
         # 获取插件安装路径
-        plugin_path = Path(importlib.import_module("app.plugins.modules").__path__[0]) / f"{module_id.lower()}.py"
+        plugin_path = Path(importlib.import_module("app.plugins.modules").__path__[0])
+        # windows 可能不存在插件目录，需要进行创建
+        if not os.path.exists(plugin_path):
+            os.makedirs(plugin_path)
+        plugin_file = plugin_path / f"{module_id.lower()}.py"
 
         # 获取插件内容
-        result = RequestUtils(timeout=5).get_res(download_url)
+        result = RequestUtils(timeout=5, proxies=Config().get_proxies()).get_res(download_url)
 
         # 将插件存入本地插件库
         if not result or not result.content:
             return {"code": 1, "msg": "插件下载失败，请检查三方源是否可以正常访问！"}
 
-        open(plugin_path, "wb").write(result.content)
+        open(plugin_file, "wb").write(result.content)
 
         if file_md5:
             log.info(file_md5)
