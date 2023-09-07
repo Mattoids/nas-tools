@@ -1244,6 +1244,7 @@ class WebAction:
 
             # 重启
             log.info(f'【UpdateSystem】系统升级完成，正在重启...')
+            log.info("【UpdateSystem】请手动刷新页面！")
             time.sleep(3)
             self.restart_server()
         # 升级
