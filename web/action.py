@@ -1237,6 +1237,11 @@ class WebAction:
             # 修复权限
             user_auth = os.stat(root_path)
             os.chown(f"{root_path}", user_auth.st_uid, user_auth.st_gid)
+
+            # 清理临时目录
+            PathUtils.del_files(tmp_path)
+            log.info(f'【UpdateSystem】清理临时目录...')
+
             # 重启
             log.info(f'【UpdateSystem】系统升级完成，正在重启...')
             self.restart_server()
