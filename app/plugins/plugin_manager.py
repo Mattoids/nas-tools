@@ -328,12 +328,10 @@ class PluginManager:
             for pid in result:
                 image_name = images_path / result[pid]["icon"].split("/").pop()
 
-                result_images = RequestUtils(timeout=5).get_res(result[pid]["icon"])
-
-                if not result_images or not result_images.content:
-                    continue
-
                 if not image_name.exists():
+                    result_images = RequestUtils(timeout=5).get_res(result[pid]["icon"])
+                    if not result_images or not result_images.content:
+                        continue
                     open(image_name, "wb").write(result_images.content)
         except Exception as e:
             ExceptionUtils.exception_traceback(e)
@@ -354,7 +352,16 @@ class PluginManager:
         # 获取第三方仓库
         try:
             # 获取第三方数据源
+            url = "https://gitee.com/Mattoid/nas-tools-plugin/raw/master/source.json"
             source_url = SystemConfig().get(SystemConfigKey.ExternalPluginsSource) or []
+
+            # 判断是否有空值在列表中
+            while "" in source_url:
+                source_url.remove("")
+            # 添加默认源
+            if url not in source_url:
+                source_url.append(url)
+
             # 创建线程池
             executor = ThreadPoolExecutor(max_workers=len(source_url) or 1)
             for url in source_url:

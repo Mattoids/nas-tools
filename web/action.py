@@ -1188,46 +1188,63 @@ class WebAction:
         更新
         """
         third_version = Config().get_config("app").get("third_version")
+        log.info(f'【UpdateSystem】检查是否开启第三方更新源: {third_version}')
         if third_version:
+            log.info("【UpdateSystem】开始第三方源更新流程")
             # 获取当前系统根目录
             root_path = Config().get_root_path()
+            log.info(f'【UpdateSystem】获取系统根目录: {root_path}')
 
             # 下载文件临时目录
             tmp_path = "/tmp/nas-tools"
             # 文件不存在则创建
             if not os.path.exists(tmp_path):
+                log.info(f'【UpdateSystem】创建临时目录: {tmp_path}')
                 os.makedirs(tmp_path)
 
             tmp_path_file = os.path.join(tmp_path, "nas-tools.zip")
             # 获取版本下载地址
             version, download_url = WebUtils.get_latest_version()
+            log.info(f'【UpdateSystem】获取最新系统版本: {version}')
+            log.info(f'【UpdateSystem】获取最新系统下载地址: {download_url}')
+
             # 开始下载文件
+            log.info("【UpdateSystem】正在下载最新系统")
             result = RequestUtils(timeout=5, proxies=Config().get_proxies()).get_res(download_url)
+            if result.status_code != 200:
+                log.error("【UpdateSystem】系统下载失败，停止更新")
+                return {"code": 1, "msg": "系统下载失败"}
+            log.info(f'【UpdateSystem】保存系统文件：{tmp_path_file}')
             open(tmp_path_file, "wb").write(result.content)
 
             # 解压文件
+            log.info(f'【UpdateSystem】正在解压文件...')
             shutil.unpack_archive(tmp_path_file, tmp_path, format='zip')
             tmp_path_root = os.path.join(tmp_path, f"nas-tools-{version.split()[0]}")
+            log.info(f'【UpdateSystem】文件解压成功：{tmp_path_root}')
 
             # 删除不需要的文件
             PathUtils.del_files(os.path.join(tmp_path_root, ".github"))
             PathUtils.del_files(os.path.join(tmp_path_root, "config"))
 
             # 拷贝文件
+            log.info(f'【UpdateSystem】正在升级系统版本...')
             os.system(f"cp -R {tmp_path_root}/* {root_path}/")
 
             # 安装依赖
+            log.info(f'【UpdateSystem】正在安装系统依赖...')
             os.system(f'sudo pip install -r {root_path}/requirements.txt')
             # 修复权限
             user_auth = os.stat(root_path)
             os.chown(f"{root_path}", user_auth.st_uid, user_auth.st_gid)
             # 重启
+            log.info(f'【UpdateSystem】系统升级完成，正在重启...')
             self.restart_server()
         # 升级
         elif SystemUtils.is_synology():
             if SystemUtils.execute('/bin/ps -w -x | grep -v grep | grep -w "nastool update" | wc -l') == '0':
                 # 调用群晖套件内置命令升级
-                os.system('nastool update')
+                os.system('【UpdateSystem】nastool update')
                 # 重启
                 self.restart_server()
         else:
