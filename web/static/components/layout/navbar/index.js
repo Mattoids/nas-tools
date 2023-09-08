@@ -9,9 +9,11 @@ export class LayoutNavbar extends CustomElement {
     layout_appversion: { attribute: "layout-appversion"},
     layout_userlevel: { attribute: "layout-userlevel"},
     layout_useradmin: { attribute: "layout-useradmin"},
+    layout_third_version: {attribute: "layout-third-version"},
     _active_name: { state: true},
     _update_appversion: { state: true },
     _update_url: { state: true },
+    _update_third_url: { state: true },
     _is_update: { state: true },
   };
 
@@ -23,6 +25,7 @@ export class LayoutNavbar extends CustomElement {
     this._active_name = "";
     this._update_appversion = "";
     this._update_url = "https://github.com/NAStool/nas-tools/releases";
+    this._update_third_url = "https://github.com/Mattoids/nas-tools/releases";
     this._is_update = false;
     this._is_expand = false;
     this.classList.add("navbar","navbar-vertical","navbar-expand-lg","lit-navbar-fixed","lit-navbar","lit-navbar-hide-scrollbar");
@@ -162,7 +165,7 @@ export class LayoutNavbar extends CustomElement {
                   ${this.layout_userlevel > 1 ? html`
                   <!-- 升级提示 -->
                   <span class="d-flex flex-grow-1 justify-content-center border rounded-3 m-3 p-2 ${this._is_update ? "bg-yellow" : ""}">
-                    <a href="${this._is_update ? 'javascript:update_system()' : this._update_url}" class="${this._is_update ? "text-yellow-fg" : "text-muted"}" target="${this._is_update ? '_self': '_blank'}" rel="noreferrer">
+                    <a href="${this._is_update ? 'javascript:update_system()' : this.layout_third_version === 'True' ? this._update_third_url : this._update_url}" class="${this._is_update ? "text-yellow-fg" : "text-muted"}" target="${this._is_update ? '_self': '_blank'}" rel="noreferrer">
                       <strong>
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"

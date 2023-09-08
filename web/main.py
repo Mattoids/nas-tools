@@ -236,6 +236,7 @@ def web():
                            CooperationSites=CooperationSites,
                            DefaultPath=DefaultPath,
                            Menus=Menus,
+                           ThirdVersion=Config().get_config("app").get("third_version"),
                            Commands=Commands)
 
 
