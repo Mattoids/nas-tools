@@ -74,19 +74,8 @@ class BuiltinIndexer(_IIndexClient):
         chrome_ok = self.chromehelper.get_status()
         site = self.sites.get_sites(siteurl=url)
         if site:
-            indexer = self.user.get_indexer(url=url,
-                                         siteid=site.get("id"),
-                                         cookie=site.get("cookie"),
-                                         ua=site.get("ua"),
-                                         name=site.get("name"),
-                                         rule=site.get("rule"),
-                                         pri=site.get('pri'),
-                                         public=False,
-                                         proxy=site.get("proxy"),
-                                         render=False if not chrome_ok else site.get("chrome"))
-            if not indexer:
-                url = site.get("signurl") or site.get("rssurl")
-                indexer = IndexerHelper().get_indexer(url=url,
+            site_url = site.get("signurl") or site.get("rssurl")
+            indexer = IndexerHelper().get_indexer(url=site_url,
                                             siteid=site.get("id"),
                                             cookie=site.get("cookie"),
                                             ua=site.get("ua"),
@@ -96,6 +85,17 @@ class BuiltinIndexer(_IIndexClient):
                                             public=False,
                                             proxy=site.get("proxy"),
                                             render=False if not chrome_ok else site.get("chrome"))
+            if not indexer:
+                indexer = self.user.get_indexer(url=url,
+                                         siteid=site.get("id"),
+                                         cookie=site.get("cookie"),
+                                         ua=site.get("ua"),
+                                         name=site.get("name"),
+                                         rule=site.get("rule"),
+                                         pri=site.get('pri'),
+                                         public=False,
+                                         proxy=site.get("proxy"),
+                                         render=False if not chrome_ok else site.get("chrome"))
         return indexer
 
     def get_indexers(self, check=True, public=True, plugins=True):
