@@ -730,3 +730,10 @@ class Message(object):
         )
         self.init_config()
         return ret
+
+    def send_create_menu(self, commands=None):
+        state = False
+        client = self._active_interactive_clients.get(SearchType.WX)
+        if client:
+            state = client.get('client').create_menus(commands=commands)
+        return state

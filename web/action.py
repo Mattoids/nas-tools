@@ -240,16 +240,16 @@ class WebAction:
         }
         # 远程命令响应
         self._commands = {
-            "/ptr": {"func": TorrentRemover().auto_remove_torrents, "desc": "自动删种"},
-            "/ptt": {"func": Downloader().transfer, "desc": "下载文件转移"},
-            "/rst": {"func": Sync().transfer_sync, "desc": "目录同步"},
-            "/rss": {"func": Rss().rssdownload, "desc": "电影/电视剧订阅"},
-            "/ssa": {"func": Subscribe().subscribe_search_all, "desc": "订阅搜索"},
-            "/tbl": {"func": self.truncate_blacklist, "desc": "清理转移缓存"},
-            "/trh": {"func": self.truncate_rsshistory, "desc": "清理RSS缓存"},
-            "/utf": {"func": self.unidentification, "desc": "重新识别"},
-            "/udt": {"func": self.update_system, "desc": "系统更新"},
-            "/sta": {"func": self.user_statistics, "desc": "站点数据统计"}
+            "/ptr": {"func": TorrentRemover().auto_remove_torrents, "desc": "自动删种", "category": "站点"},
+            "/ptt": {"func": Downloader().transfer, "desc": "下载文件转移", "category": "管理"},
+            "/rst": {"func": Sync().transfer_sync, "desc": "目录同步", "category": "管理"},
+            "/rss": {"func": Rss().rssdownload, "desc": "电影/电视剧订阅", "category": "订阅"},
+            "/ssa": {"func": Subscribe().subscribe_search_all, "desc": "订阅搜索", "category": "订阅"},
+            "/tbl": {"func": self.truncate_blacklist, "desc": "清理转移缓存", "category": "管理"},
+            "/trh": {"func": self.truncate_rsshistory, "desc": "清理RSS缓存", "category": "管理"},
+            "/utf": {"func": self.unidentification, "desc": "重新识别", "category": "管理"},
+            "/udt": {"func": self.update_system, "desc": "系统更新", "category": "管理"},
+            "/sta": {"func": self.user_statistics, "desc": "站点数据统计", "category": "管理"}
         }
 
     def action(self, cmd, data):
@@ -5316,3 +5316,19 @@ class WebAction:
             "id": item.get("cmd"),
             "name": item.get("desc")
         } for item in PluginManager().get_plugin_commands()]
+
+    def get_commands_map(self):
+        """
+        获取命令列表
+        """
+        commands = self._commands
+
+        for item in PluginManager().get_plugin_commands():
+            commands[item.get("cmd")] = item
+
+        return commands
+
+    @staticmethod
+    def create_wechat_menu():
+        commands = WebAction().get_commands_map()
+        Message().send_create_menu(commands=commands)

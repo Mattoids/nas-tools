@@ -276,6 +276,7 @@ class AutoSignIn(_IPluginModule):
             "cmd": "/pts",
             "event": EventType.SiteSignin,
             "desc": "站点签到",
+            "category": "站点",
             "data": {}
         }
 

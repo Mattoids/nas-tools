@@ -107,6 +107,8 @@ def start_service():
     WebAction.auth_user_level()
     # 监听配置文件变化
     start_config_monitor()
+    # 创建微信菜单
+    WebAction.create_wechat_menu()
 
 
 # 系统初始化

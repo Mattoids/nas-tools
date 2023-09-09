@@ -425,6 +425,7 @@ class DoubanSync(_IPluginModule):
             "cmd": "/db",
             "event": EventType.DoubanSync,
             "desc": "豆瓣同步",
+            "category": "订阅",
             "data": {}
         }
 

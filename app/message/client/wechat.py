@@ -2,6 +2,7 @@ import json
 import threading
 from datetime import datetime
 
+import log
 from app.message.client._base import _IMessageClient
 from app.utils import RequestUtils, ExceptionUtils
 
@@ -22,9 +23,11 @@ class WeChat(_IMessageClient):
     _corpsecret = None
     _agent_id = None
     _interactive = False
+    _appid = None
 
     _send_msg_url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=%s"
     _token_url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s"
+    _create_menu_url = "https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token=%s&agentid=%s"
 
     def __init__(self, config):
         self._client_config = config
@@ -37,13 +40,16 @@ class WeChat(_IMessageClient):
             self._corpsecret = self._client_config.get('corpsecret')
             self._agent_id = self._client_config.get('agentid')
             self._default_proxy = self._client_config.get('default_proxy')
+            self._appid = self._client_config.get('agentid')
         if self._default_proxy:
             if isinstance(self._default_proxy, bool):
                 self._send_msg_url = f"{self._default_proxy_url}/cgi-bin/message/send?access_token=%s"
                 self._token_url = f"{self._default_proxy_url}/cgi-bin/gettoken?corpid=%s&corpsecret=%s"
+                self._create_menu_url = f"{self._default_proxy_url}/cgi-bin/menu/create?access_token=%s&agentid=%s"
             else:
                 self._send_msg_url = f"{self._default_proxy}/cgi-bin/message/send?access_token=%s"
                 self._token_url = f"{self._default_proxy}/cgi-bin/gettoken?corpid=%s&corpsecret=%s"
+                self._create_menu_url = f"{self._default_proxy}/cgi-bin/menu/create?access_token=%s&agentid=%s"
         if self._corpid and self._corpsecret and self._agent_id:
             self.__get_access_token()
 
@@ -223,3 +229,79 @@ class WeChat(_IMessageClient):
         except Exception as err:
             ExceptionUtils.exception_traceback(err)
             return False, str(err)
+
+
+    def create_menus(self, commands = None):
+        """
+        自动注册微信菜单
+        :param commands: 命令字典
+        命令字典：
+        {
+            "/cookiecloud": {
+                "func": CookieCloudChain(self._db).remote_sync,
+                "description": "同步站点",
+                "category": "站点",
+                "data": {}
+            }
+        }
+        注册报文格式，一级菜单只有最多3条，子菜单最多只有5条：
+        {
+           "button":[
+               {
+                   "type":"click",
+                   "name":"今日歌曲",
+                   "key":"V1001_TODAY_MUSIC"
+               },
+               {
+                   "name":"菜单",
+                   "sub_button":[
+                       {
+                           "type":"view",
+                           "name":"搜索",
+                           "url":"http://www.soso.com/"
+                       },
+                       {
+                           "type":"click",
+                           "name":"赞一下我们",
+                           "key":"V1001_GOOD"
+                       }
+                   ]
+              }
+           ]
+        }
+        """
+        # 请求URL
+        req_url = self._create_menu_url % (self.__get_access_token(), self._appid)
+        log.info(f"创建微信菜单 {req_url}")
+
+        # 对commands按category分组
+        category_dict = {}
+        for key, value in commands.items():
+            category = value.get("category")
+            if category:
+                if not category_dict.get(category):
+                    category_dict[category] = {}
+                category_dict[category][key] = value
+
+        # 一级菜单
+        buttons = []
+        for category, menu in category_dict.items():
+            # 二级菜单
+            sub_buttons = []
+            for key, value in menu.items():
+                sub_buttons.append({
+                    "type": "click",
+                    "name": value.get("desc"),
+                    "key": key
+                })
+            buttons.append({
+                "name": category,
+                "sub_button": sub_buttons[:5]
+            })
+
+        if buttons:
+            # 发送请求
+            result = self.__post_request(req_url, {
+                "button": buttons[:3]
+            })
+            log.info(f"微信菜单创建结果 {result}")
