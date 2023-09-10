@@ -141,6 +141,8 @@ class EventType(Enum):
     SiteSignin = "site.signin"
     # 新增变更
     SiteEdit = "site.edit"
+    # 同步站点数据
+    CookieCloud = "cookiecloud.sync"
 
 
 # 系统配置Key字典

@@ -272,7 +272,6 @@ class WeChat(_IMessageClient):
         """
         # 请求URL
         req_url = self._create_menu_url % (self.__get_access_token(), self._appid)
-        log.info(f"创建微信菜单 {req_url}")
 
         # 对commands按category分组
         category_dict = {}

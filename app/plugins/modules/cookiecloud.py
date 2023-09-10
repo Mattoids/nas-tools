@@ -10,6 +10,8 @@ from app.indexer import Indexer
 from app.plugins.modules._base import _IPluginModule
 from app.sites import Sites
 from app.utils import RequestUtils
+from app.utils.types import EventType
+from app.plugins import EventHandler
 from config import Config
 
 
@@ -328,3 +330,21 @@ class CookieCloud(_IPluginModule):
                 self._scheduler = None
         except Exception as e:
             print(str(e))
+
+    @staticmethod
+    def get_command():
+        """
+        定义远程控制命令
+        :return: 命令关键字、事件、描述、附带数据
+        """
+        return {
+            "cmd": "/ptc",
+            "event": EventType.CookieCloud,
+            "desc": "同步站点信息",
+            "category": "站点",
+            "data": {}
+        }
+
+    @EventHandler.register(EventType.SiteSignin)
+    def sync_cookiecloud(self):
+        self.__cookie_sync()
