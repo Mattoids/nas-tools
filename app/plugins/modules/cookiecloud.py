@@ -6,6 +6,7 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from app.helper import IndexerHelper
 from app.indexer import Indexer
 from app.plugins.modules._base import _IPluginModule
 from app.sites import Sites
@@ -13,6 +14,7 @@ from app.utils import RequestUtils
 from app.utils.types import EventType
 from app.plugins import EventHandler
 from config import Config
+from web.backend.user import User
 
 class CookieCloud(_IPluginModule):
     # 插件名称
@@ -284,7 +286,10 @@ class CookieCloud(_IPluginModule):
                     update_count += 1
             else:
                 # 查询是否在索引器范围
-                indexer_info = self.indexer.get_indexer(url=domain_url)
+                indexer_info = IndexerHelper().get_indexer(url=domain_url)
+                if not indexer_info:
+                    indexer_info = User().get_indexer(url=domain_url)
+
                 if indexer_info:
                     # 支持则新增站点
                     site_pri = self.sites.get_max_site_pri() + 1

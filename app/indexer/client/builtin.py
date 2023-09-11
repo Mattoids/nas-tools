@@ -73,13 +73,6 @@ class BuiltinIndexer(_IIndexClient):
         indexer = None
         chrome_ok = self.chromehelper.get_status()
 
-        indexer = IndexerHelper().get_indexer(url=url)
-        if indexer:
-            return indexer
-        indexer = self.user.get_indexer(url=url)
-        if indexer:
-            return indexer
-
         site = self.sites.get_sites(siteurl=url)
         if site:
             site_url = url
