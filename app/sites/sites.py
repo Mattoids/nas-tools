@@ -7,6 +7,8 @@ from app.message import Message
 from app.sites.site_limiter import SiteRateLimiter
 from app.utils import RequestUtils, StringUtils
 from app.utils.commons import singleton
+from app.utils.types import EventType
+from app.plugins import EventManager
 from config import Config
 
 
@@ -326,6 +328,7 @@ class Sites:
                                                note=note,
                                                rss_uses=rss_uses)
         self.init_config()
+        EventManager().send_event(EventType.SiteEdit, {})
         return ret
 
     def update_site(self, tid, name, site_pri,
@@ -342,6 +345,7 @@ class Sites:
                                                note=note,
                                                rss_uses=rss_uses)
         self.init_config()
+        EventManager().send_event(EventType.SiteEdit, {})
         return ret
 
     def delete_site(self, siteid):

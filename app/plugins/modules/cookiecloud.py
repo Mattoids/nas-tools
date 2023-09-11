@@ -13,8 +13,6 @@ from app.utils import RequestUtils
 from app.utils.types import EventType
 from app.plugins import EventHandler
 from config import Config
-from web.backend.user import User
-
 
 class CookieCloud(_IPluginModule):
     # 插件名称
@@ -346,6 +344,6 @@ class CookieCloud(_IPluginModule):
             "data": {}
         }
 
-    @EventHandler.register(EventType.SiteSignin)
-    def sync_cookiecloud(self):
+    @EventHandler.register(EventType.CookieCloud)
+    def sync_cookiecloud(self, event=None):
         self.__cookie_sync()
