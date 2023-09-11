@@ -20,10 +20,6 @@ class IndexerHelper:
         except Exception as err:
             ExceptionUtils.exception_traceback(err)
 
-    def get_all_indexers(self):
-        self.init_config()
-        return self._indexers
-
     def get_indexer(self,
                     url,
                     siteid=None,

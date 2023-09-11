@@ -13,6 +13,7 @@ from app.utils import RequestUtils
 from app.utils.types import EventType
 from app.plugins import EventHandler
 from config import Config
+from web.backend.user import User
 
 
 class CookieCloud(_IPluginModule):
@@ -285,14 +286,14 @@ class CookieCloud(_IPluginModule):
                     update_count += 1
             else:
                 # 查询是否在索引器范围
-                indexer_info = self.indexer.get_indexer(domain_url)
+                indexer_info = self.indexer.get_indexer(url=domain_url)
                 if indexer_info:
                     # 支持则新增站点
                     site_pri = self.sites.get_max_site_pri() + 1
                     self.sites.add_site(
-                        name=indexer_info.get("name"),
+                        name=indexer_info.name,
                         site_pri=site_pri,
-                        signurl=indexer_info.get("domain"),
+                        signurl=indexer_info.domain,
                         cookie=cookie_str,
                         rss_uses='T'
                     )

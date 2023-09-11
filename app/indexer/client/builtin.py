@@ -72,9 +72,17 @@ class BuiltinIndexer(_IIndexClient):
         # 检查浏览器状态
         indexer = None
         chrome_ok = self.chromehelper.get_status()
+
+        indexer = IndexerHelper().get_indexer(url=url)
+        if indexer:
+            return indexer
+        indexer = self.user.get_indexer(url=url)
+        if indexer:
+            return indexer
+
         site = self.sites.get_sites(siteurl=url)
         if site:
-            site_url = site.get("signurl") or site.get("rssurl")
+            site_url = url
             indexer = IndexerHelper().get_indexer(url=site_url,
                                             siteid=site.get("id"),
                                             cookie=site.get("cookie"),
