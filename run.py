@@ -124,7 +124,7 @@ if __name__ == '__main__':
     if is_windows_exe:
         homepage = Config().get_config('app').get('domain')
         if not homepage:
-            homepage = "http://localhost:%s" % str(Config().get_config('app').get('web_port'))
+            homepage = "http://0.0.0.0:%s" % str(Config().get_config('app').get('web_port'))
         log_path = os.environ.get("NASTOOL_LOG")
 
         sys.stdout = NullWriter()
