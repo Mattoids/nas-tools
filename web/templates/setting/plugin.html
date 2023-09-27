@@ -348,7 +348,8 @@
       var params = {
           id: id,
           file_md5: file_md5,
-          download_url: download_url
+          download_url: download_url,
+          is_update: false
       }
       ajax_post("install_external_plugin", params, function(ret){
       $("#modal-external-plugin-apps").modal('hide');
@@ -386,7 +387,8 @@
       var params = {
           id: id,
           file_md5: file_md5,
-          download_url: download_url
+          download_url: download_url,
+          is_update: true
       }
       ajax_post("install_external_plugin", params, function(ret){
           $("#modal-external-plugin-apps").modal('hide');

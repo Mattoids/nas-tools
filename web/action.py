@@ -1245,7 +1245,7 @@ class WebAction:
             # 重启
             log.info(f'【UpdateSystem】系统升级完成，正在重启...')
             log.info("【UpdateSystem】请手动刷新页面！")
-            time.sleep(3)
+            time.sleep(5)
             self.restart_server()
         # 升级
         elif SystemUtils.is_synology():
@@ -5225,6 +5225,7 @@ class WebAction:
         module_id = data.get("id")
         file_md5 = data.get("file_md5")
         download_url = data.get("download_url")
+        is_update = data.get("is_update")
         if not module_id or not download_url:
             return {"code": -1, "msg": "参数错误"}
 
@@ -5267,6 +5268,11 @@ class WebAction:
         # 重新加载插件
         if reload:
             PluginManager().init_config()
+
+        if is_update:
+            WebAction.stop_service()
+            WebAction.start_service()
+
         return {"code": 0, "msg": "插件安装成功"}
 
     @staticmethod
