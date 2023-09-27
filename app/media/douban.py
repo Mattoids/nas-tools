@@ -211,7 +211,7 @@ class DouBan:
             meta_info.tmdb_id = "DB:%s" % item.get("id")
             meta_info.douban_id = item.get("id")
             meta_info.overview = item.get("card_subtitle") or ""
-            meta_info.poster_path = item.get("cover_url").split('?')[0]
+            meta_info.poster_path = item.get("cover_url")
             rating = item.get("rating", {}) or {}
             meta_info.vote_average = rating.get("value")
             if meta_info not in ret_medias:
