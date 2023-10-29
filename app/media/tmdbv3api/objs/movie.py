@@ -38,8 +38,17 @@ class Movie(TMDb):
         "release_dates": "/movie/%s/release_dates",
         "watch_providers": "/movie/%s/watch/providers",
         "translations": "/movie/%s/translations",
-        "discover": "/discover/movie"
+        "discover": "/discover/movie",
+        "person_details": "/person/%s"
     }
+
+    def person_detail(self, movie_id, append_to_response="videos,images"):
+        return AsObj(
+            **self._call(
+                self._urls["person_details"] % movie_id,
+                "append_to_response=" + append_to_response,
+            )
+        )
 
     def details(
             self,

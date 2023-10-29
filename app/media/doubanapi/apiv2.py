@@ -22,6 +22,7 @@ class DoubanApi(object):
         # 聚合搜索
         "search": "/search/weixin",
         "search_agg": "/search",
+        "imdbid": "/movie/imdb/%s",
 
         # 电影探索
         # sort=U:综合排序 T:近期热度 S:高分优先 R:首播时间
@@ -145,7 +146,9 @@ class DoubanApi(object):
         "api-client/1 com.douban.frodo/7.3.0(207) Android/22 product/MI 9 vendor/Xiaomi model/MI 9 brand/Android  rom/miui6  network/wifi platform/mobile nd/1"]
     _api_secret_key = "bf7dddc7c9cfe6f7"
     _api_key = "0dad551ec0f84ed02907ff5c42e8ec70"
+    _api_key2 = "0ab215a8b1977939201640fa14c66bab"
     _base_url = "https://frodo.douban.com/api/v2"
+    _api_url = "https://api.douban.com/v2"
     _session = requests.Session()
 
     def __init__(self):
@@ -175,8 +178,41 @@ class DoubanApi(object):
 
         return resp.json() if resp else {}
 
+    @lru_cache(maxsize=512)
+    def __post(self, url: str, **kwargs) -> dict:
+        """
+        POST请求
+        esponse = requests.post(
+            url="https://api.douban.com/v2/movie/imdb/tt29139455",
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+                "Cookie": "bid=J9zb1zA5sJc",
+            },
+            data={
+                "apikey": "0ab215a8b1977939201640fa14c66bab",
+            },
+        )
+        """
+        req_url = self._api_url + url
+        params = {'apikey': self._api_key2}
+        if kwargs:
+            params.update(kwargs)
+        if '_ts' in params:
+            params.pop('_ts')
+        headers = {'User-Agent': choice(cls._user_agents)}
+        resp = RequestUtils(headers=headers, session=self._session).post_res(url=req_url, data=params)
+        if resp.status_code == 400 and "rate_limit" in resp.text:
+            return resp.json()
+        return resp.json() if resp else {}
+
     def search(self, keyword, start=0, count=20, ts=datetime.strftime(datetime.now(), '%Y%m%d')):
         return self.__invoke(self._urls["search"], q=keyword, start=start, count=count, _ts=ts)
+
+    def imdbid(self, imdbid: str, ts=datetime.strftime(datetime.now(), '%Y%m%d')):
+        """
+        IMDBID搜索
+        """
+        return self.__post(self._urls["imdbid"] % imdbid, _ts=ts)
 
     def movie_search(self, keyword, start=0, count=20, ts=datetime.strftime(datetime.now(), '%Y%m%d')):
         return self.__invoke(self._urls["movie_search"], q=keyword, start=start, count=count, _ts=ts)
