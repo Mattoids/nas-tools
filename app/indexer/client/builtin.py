@@ -98,7 +98,6 @@ class BuiltinIndexer(_IIndexClient):
                                          pri=site.get('pri'),
                                          public=False,
                                          proxy=site.get("proxy"),
-                                         apikey=site.get("apikey"),
                                          render=False if not chrome_ok else site.get("chrome"))
         return indexer
 
