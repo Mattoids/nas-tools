@@ -8,7 +8,7 @@ class OcrHelper:
 
     _ocr_b64_url = "https://ocr.ddsrem.com/captcha/base64"
 
-    def get_captcha_text(self, image_url=None, image_b64=None, cookie=None, ua=None):
+    def get_captcha_text(self, image_url=None, image_b64=None, cookie=None, ua=None, apikey=None):
         """
         根据图片地址，获取验证码图片，并识别内容
         :param image_url: 图片地址

@@ -24,7 +24,7 @@ class _ISiteUserInfo(metaclass=ABCMeta):
     # 站点解析时判断顺序，值越小越先解析
     order = SITE_BASE_ORDER
 
-    def __init__(self, site_name, url, site_cookie, index_html, session=None, ua=None, emulate=False, proxy=None):
+    def __init__(self, site_name, url, site_cookie, index_html, session=None, ua=None, emulate=False, proxy=None, apikey=None):
         super().__init__()
         # 站点信息
         self.site_name = None
@@ -92,6 +92,7 @@ class _ISiteUserInfo(metaclass=ABCMeta):
 
         self._emulate = emulate
         self._proxy = proxy
+        self._apikey = apikey
 
     def site_schema(self):
         """
@@ -248,7 +249,7 @@ class _ISiteUserInfo(metaclass=ABCMeta):
                 log.debug(f"【Sites】{self.site_name} 检测到Cloudflare，需要浏览器仿真")
                 chrome = ChromeHelper()
                 if self._emulate and chrome.get_status():
-                    if not chrome.visit(url=url, ua=self._ua, cookie=self._site_cookie, proxy=self._proxy):
+                    if not chrome.visit(url=url, ua=self._ua, cookie=self._site_cookie, proxy=self._proxy, apikey=self._apikey):
                         log.error(f"【Sites】{self.site_name} 无法打开网站")
                         return ""
                     # 循环检测是否过cf

@@ -9,6 +9,7 @@ from app.indexer.client._base import _IIndexClient
 from app.indexer.client._rarbg import Rarbg
 from app.indexer.client._render_spider import RenderSpider
 from app.indexer.client._spider import TorrentSpider
+from app.indexer.client._mt_spider import MTSpider
 from app.indexer.client._tnode import TNodeSpider
 from app.indexer.client._torrentleech import TorrentLeech
 from app.indexer.client._plugins import PluginsSpider
@@ -85,6 +86,7 @@ class BuiltinIndexer(_IIndexClient):
                                             pri=site.get('pri'),
                                             public=False,
                                             proxy=site.get("proxy"),
+                                            apikey=site.get("apikey"),
                                             render=False if not chrome_ok else site.get("chrome"))
             if not indexer:
                 indexer = self.user.get_indexer(url=url,
@@ -96,6 +98,7 @@ class BuiltinIndexer(_IIndexClient):
                                          pri=site.get('pri'),
                                          public=False,
                                          proxy=site.get("proxy"),
+                                         apikey=site.get("apikey"),
                                          render=False if not chrome_ok else site.get("chrome"))
         return indexer
 
@@ -122,6 +125,7 @@ class BuiltinIndexer(_IIndexClient):
                                                   pri=site.get('pri'),
                                                   public=False,
                                                   proxy=site.get("proxy"),
+                                                  apikey=site.get("apikey"),
                                                   render=render)
             if indexer:
                 if check and (not indexer_sites or indexer.id not in indexer_sites):
@@ -140,6 +144,7 @@ class BuiltinIndexer(_IIndexClient):
                                                 pri=site.get('pri'),
                                                 public=False,
                                                 proxy=site.get("proxy"),
+                                                apikey=site.get("apikey"),
                                                 render=render)
                 if indexer:
                     if check and (not indexer_sites or indexer.id not in indexer_sites):
@@ -210,7 +215,9 @@ class BuiltinIndexer(_IIndexClient):
         # 开始索引
         result_array = []
         try:
-            if indexer.parser == "TNodeSpider":
+            if indexer.parser == "MTSpider":
+                error_flag, result_array = MTSpider(indexer).search(keyword=search_word)
+            elif indexer.parser == "TNodeSpider":
                 error_flag, result_array = TNodeSpider(indexer).search(keyword=search_word)
             elif indexer.parser == "RarBg":
                 error_flag, result_array = Rarbg(indexer).search(
@@ -272,7 +279,9 @@ class BuiltinIndexer(_IIndexClient):
         # 计算耗时
         start_time = datetime.datetime.now()
 
-        if indexer.parser == "RenderSpider":
+        if indexer.parser == "MTSpider":
+            error_flag, result_array = MTSpider(indexer).search(keyword=keyword, page=page)
+        elif indexer.parser == "RenderSpider":
             error_flag, result_array = RenderSpider(indexer).search(keyword=keyword,
                                                                     page=page)
         elif indexer.parser == "RarBg":

@@ -1,15 +1,19 @@
 import json
 import random
 import time
+import re
+import log
 from functools import lru_cache
 
 from lxml import etree
+from urllib import parse
 
 from app.helper import ChromeHelper
 from app.utils import ExceptionUtils, StringUtils, RequestUtils, JsonUtils
 from app.utils.commons import singleton
 from config import Config
 from web.backend.user import User
+from app.apis import MTeamApi
 
 
 @singleton
@@ -101,12 +105,13 @@ class SiteConf:
                 return v
         return {}
 
-    def check_torrent_attr(self, torrent_url, cookie, ua=None, proxy=False):
+    def check_torrent_attr(self, torrent_url, cookie, ua=None, proxy=False, apikey=None):
         """
         检验种子是否免费，当前做种人数
         :param torrent_url: 种子的详情页面
         :param cookie: 站点的Cookie
         :param ua: 站点的ua
+        :param apikey: 站点的apikey
         :param proxy: 是否使用代理
         :return: 种子属性，包含FREE 2XFREE HR PEER_COUNT等属性
         """
@@ -114,10 +119,15 @@ class SiteConf:
             "free": False,
             "2xfree": False,
             "hr": False,
-            "peer_count": 0
+            "peer_count": 0,
+            "downloadvolumefactor": 1.0,
+            "uploadvolumefactor": 1.0,
         }
         if not torrent_url:
             return ret_attr
+        domain = StringUtils.get_url_domain(torrent_url)
+        if 'm-team' in domain:
+            return MTeamApi.check_torrent_attr(torrent_url, ua, apikey, proxy)
         xpath_strs = self.get_grap_conf(torrent_url)
         if not xpath_strs:
             return ret_attr
@@ -135,10 +145,14 @@ class SiteConf:
                 if html.xpath(xpath_str):
                     ret_attr["free"] = True
                     ret_attr["2xfree"] = True
+                    ret_attr["downloadvolumefactor"] = 0
+                    ret_attr["uploadvolumefactor"] = 2.0
             # 检测FREE
             for xpath_str in xpath_strs.get("FREE"):
                 if html.xpath(xpath_str):
                     ret_attr["free"] = True
+                    ret_attr["downloadvolumefactor"] = 0
+                    ret_attr["uploadvolumefactor"] = 1.0
             # 检测HR
             for xpath_str in xpath_strs.get("HR"):
                 if html.xpath(xpath_str):

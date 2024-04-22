@@ -48,6 +48,7 @@ from config import RMT_MEDIAEXT, RMT_SUBEXT, RMT_AUDIO_TRACK_EXT, Config
 from web.backend.search_torrents import search_medias_for_web, search_media_by_message
 from web.backend.user import User
 from web.backend.web_utils import WebUtils
+from app.apis import MTeamApi
 
 
 class WebAction:
@@ -554,6 +555,12 @@ class WebAction:
         dl_setting = data.get("setting")
         results = Searcher().get_search_result_by_id(dl_id)
         for res in results:
+            if not res.ENCLOSURE:
+                base_url = StringUtils.get_base_url(res.PAGEURL)
+                log.info(f"【Action】检查馒头下载地址：%s" % (res.PAGEURL))
+                if "m-team" in base_url:
+                    site_info = Sites().get_sites_by_url_domain(base_url)
+                    res.ENCLOSURE = MTeamApi.get_torrent_url_by_detail_url(base_url, res.PAGEURL, site_info)
             media = Media().get_media_info(title=res.TORRENT_NAME, subtitle=res.DESCRIPTION)
             if not media:
                 continue
@@ -590,6 +597,12 @@ class WebAction:
         downloadvolumefactor = data.get("downloadvolumefactor")
         dl_dir = data.get("dl_dir")
         dl_setting = data.get("dl_setting")
+        if not enclosure:
+            base_url = StringUtils.get_base_url(page_url)
+            log.info(f"【Action】检查馒头下载地址：%s" % (page_url))
+            if "m-team" in base_url:
+                site_info = Sites().get_sites_by_url_domain(base_url)
+                enclosure = MTeamApi.get_torrent_url_by_detail_url(base_url, page_url, site_info)
         if not title or not enclosure:
             return {"code": -1, "msg": "种子信息有误"}
         media = Media().get_media_info(title=title, subtitle=description)
@@ -653,6 +666,7 @@ class WebAction:
                 url=url,
                 cookie=site_info.get("cookie"),
                 ua=site_info.get("ua"),
+                apikey=site_info.get("apikey"),
                 proxy=site_info.get("proxy")
             )
             if not file_path:
