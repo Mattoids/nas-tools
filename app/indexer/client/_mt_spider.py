@@ -48,7 +48,7 @@ class MTSpider(object):
             headers={
                 'x-api-key': self._apikey,
                 "Content-Type": "application/json; charset=utf-8",
-                "User-Agent": f"{self._ua}",
+                # "User-Agent": f"{self._ua}",
                 "Accept": "application/json"
             },
             proxies=self._proxy,
@@ -86,7 +86,7 @@ class MTSpider(object):
             headers={
                 'x-api-key': self._apikey,
                 "Content-Type": "application/json; charset=utf-8",
-                "User-Agent": self._ua,
+                # "User-Agent": self._ua,
                 "Accept": "application/json"
             },
             proxies=self._proxy,
@@ -95,6 +95,7 @@ class MTSpider(object):
         torrents = []
         if res and res.status_code == 200:
             results = res.json().get('data', {}).get("data") or []
+            log.info(f"{results}")
             for result in results:
                 torrentid = int(result.get('id'))
                 status = result.get('status')
