@@ -1234,7 +1234,7 @@ class WebAction:
             # 解压文件
             log.info(f'【UpdateSystem】正在解压文件...')
             shutil.unpack_archive(tmp_path_file, tmp_path, format='zip')
-            tmp_path_root = os.path.join(tmp_path, f"nas-tools-{version.split()[0]}")
+            tmp_path_root = os.path.join(tmp_path, f"nas-tools-{version.split()[0][1:]}")
             log.info(f'【UpdateSystem】文件解压成功：{tmp_path_root}')
 
             # 删除不需要的文件
