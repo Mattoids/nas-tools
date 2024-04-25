@@ -1,2 +1,2 @@
-APP_VERSION = 'v3.2.8-1'
+APP_VERSION = 'v3.2.8-2'
 THIRD_VERSION = 'fa224fe'
