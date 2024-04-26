@@ -14,27 +14,27 @@ app:
   # 其它情况可以设置为file，将日志写入文件
   logtype: console
   # 【日志文件的路径】：logtype为file时生效
-  logpath:
+  logpath: ''
   # 【群晖日志中心IP和端口】：logtype为SERVER时生效。端口一般是514，只需要改动IP为群晖的IP，示例：127.0.0.1:514
   logserver: 127.0.0.1:514
   # 【日志级别】：info、debug、error
   loglevel: info
   # 【WEB管理界面监听地址】：如需支持ipv6需设置为::，如::无法访问可改为0.0.0.0
-  web_host: "::"
+  web_host: '::'
   # 【WEB管理界面端口】：默认3000
-  web_port: 3000
+  web_port: '3000'
   # 【WEB管理页面登录用户】，默认admin
   login_user: admin
   # 【WEB管理页面登录密码】：默认password，如果是全数字密码，要用''括起来
-  login_password: password
+  login_password: '[hash]pbkdf2:sha256:260000$B2n3t7WDTxN6WCWR$735dedbfd03eeded35e2b853fd2fc452dd70310e1ae04e3cce451f5fcd6b1419'
   # 【WEB管理界面使用的HTTPS的证书和KEY的路径】，留空则不启用HTTPS
-  ssl_cert:
-  ssl_key:
+  ssl_cert: ''
+  ssl_key: ''
   # 【设置代理】，themoviedb、fanart、telegram等将使用代理访问，http和https均需配置，可以是http也可以是socks5、socks5h(remote DNS) ，但需要带http或socks5前缀，两项可以配置为一样，留空则不启用
   # 示例：'http://127.0.0.1:7890' 'socks5://127.0.0.1:8018' 'socks5h://127.0.0.1:8018'
   proxies:
-    http:
     https:
+    http:
   # 【TMDB API KEY】：需要在https://www.themoviedb.org/申请，必须配置，否则无法识别媒体资源和重命名
   # 以下地址需要网络能够正常访问：api.themoviedb.org、webservice.fanart.tv
   rmt_tmdbkey:
@@ -47,17 +47,29 @@ app:
   rmt_match_mode: normal
   # 【本系统的WEB的外网地址】：需要是外网IP或者域名，需要包含端口，用于微信/Telegram信息点击跳转，如不需要可配空
   # 示例：http://IP:3000
-  domain: ""
+  domain: ''
   # 【UserAgent】：可适当修改，用于站点签到、豆瓣数据抓取等
-  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+  user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
+    like Gecko) Chrome/98.0.4758.102 Safari/537.36
   # 【登录界面壁纸】：themoviedb、bing，设置为themoviedb时需要配置TMDB API Key时才生效
   wallpaper: bing
   # Debug mode
   debug: true
   # 开启后，只有Releases更新，才会有更新提示
-  releases_update_only: false
+  releases_update_only: true
 
 # 【配置媒体库信息】
+  init_files:
+  - init_filter.sql
+  - init_userrss_v3.sql
+  - stop_all_service.sql
+  - update_downloader.sql
+  - update_subscribe.sql
+  - update_systemdict.sql
+  - update_userpris.sql
+  - update_userrss.sql
+  ocr_url: ''
+  third_version: true
 media:
   # 【媒体库电影文件存放目录】：支持配置多个目录，不同的硬盘需映射为不同的根目录，以更于程序区分
   movie_path:
@@ -74,7 +86,7 @@ media:
   # 此处配置分类的策略名，配置文件目录中需要有与策略名同名的.yaml配置文件
   # 默认策略default-category分类设置可参考"default-category.yaml"，分类参见README.MD说明
   # 如不需要启动分类，则该项配置为空
-  category: "default-category"
+  category: default-category
   # 【媒体库管理软件】：emby、jellyfin、plex，需要在emby或jellyfin或plex区配置详细信息，用于下载检查控重、媒体库展示等，建议配置
   media_server: emby
   # 【媒体库数据同步周期】：定时同步媒体服务器数据到本地，单位小时
@@ -89,10 +101,11 @@ media:
   filesize_cover: true
   # 【电影命名定义】：程序会按定义的命名格式对电影进行重命名；/代表上下级目录，{}内为占位符；占位符会使用文件识别出来的实际值替换；占位符外的字符会当成普通字符，直接体现在名称上
   # 电影占位符有：{title}：标题，{en_title}：英文标题，{original_title}：原语种标题，{original_name}：原文件名，{year}：年份，{edition}：版本(Bluray/WEB-DL等)，{videoFormat}：分辨率(1080p/4k等)，{videoCodec}：视频编码，{audioCodec}：音频编码及声道，{effect}: 视频特效(DV,HDR等), {tmdbid}：TMDB的ID, {imdbid}：IMDB的ID，{part}：part1/disc1/dvd1，{releaseGroup}：制作组/字幕组等
-  movie_name_format: "{title} ({year})/{title}-{part} ({year}) - {videoFormat}"
+  movie_name_format: '{title} ({year})/{title}-{part} ({year}) - {videoFormat}'
   # 【电视剧命名定义】：程序会按定义的命名格式对电视剧进行重命名；/代表上下级目录，{}内为占位符；占位符会使用文件识别出来的实际值替换，占位符外的字符会当成普通字符，直接体现在名称上
   # 电视剧占位符有：{title}：标题，{en_title}：英文标题，{original_title}：原语种标题，{original_name}：原文件名，{year}：年份，{edition}：版本(Bluray/WEB-DL等)，{videoFormat}：分辨率(1080p/4k等)，{videoCodec}：视频编码，{audioCodec}：音频编码及声道，{effect}: 视频特效(DV,HDR等), {tmdbid}：TMDB的ID，{imdbid}：IMDB的ID，{season}：季数，{episode}：集数，{season_episode}：剧集SxxExx，{part}：part1/disc1/dvd1，{releaseGroup}：制作组/字幕组等
-  tv_name_format: "{title} ({year})/Season {season}/{title}-{part} - {season_episode} - 第{episode}集"
+  tv_name_format: '{title} ({year})/Season {season}/{title}-{part} - {season_episode}
+    - 第{episode}集'
   # 【刮削元数据及图片】：开启后文件转移完成时会自动生成nfo描述文件及poster海报，协助媒体服务器识别和搜刮
   nfo_poster: false
   # 文件管理、自定义识别等默认路径
@@ -153,6 +166,7 @@ pt:
   site_search_result_num: 100
 
 # 【openai】
+  ptrefresh_date_cron: '6'
 openai:
   # 【openai api key】：openai的api key，可在openai官网申请
   api_key:
@@ -174,7 +188,7 @@ security:
     ipv4: 127.0.0.1
     ipv6: ::/0
   # 【API认证密钥】：用于Jellyseerr、Overseerr中Authorization认证以及非客户端类的API调用
-  api_key:
+  api_key: dXGX21qrGIUNdBLdNUxC3UragCzDgN0a
   # 【是否验证apikey】：开启时需要在回调地址中传递api密钥进行验证，以增强安全性
   check_apikey: false
 
@@ -193,4 +207,44 @@ laboratory:
   # 【精确搜索使用英文名称】：开启后对于精确搜索场景（远程搜索、订阅搜索等）将会使用英文名检索站点资源以提升匹配度，但对有些站点资源标题全是中文的则需要关闭，否则匹配不到
   search_en_title: false
   # 站点刷流规则
-  site_brush: ''
+  site_brush: "{\"ptchdbits.co\": {\"FREE\": [\"//h1[@id='top']/img[@class='pro_free']\"\
+    ], \"2XFREE\": [], \"HR\": [\"//b[contains(text(),'H&R:')]\"], \"PEER_COUNT\"\
+    : [\"//div[@id='peercount']/b[1]\"]}, \"www.haidan.video\": {\"FREE\": [\"//div[@class='torrent']/div/div/div/div/div[@class='torrent_name_wrap']/div/div[@class='sp']/img[@class='pro_free']\"\
+    ], \"2XFREE\": [], \"HR\": [], \"PEER_COUNT\": []}, \"open.cd\": {\"FREE\": [\"\
+    //div[@class='whitespace-nowrap']/span[@class='promotion-tag-free']\"], \"2XFREE\"\
+    : [\"//div[@class='whitespace-nowrap']/span[@class='promotion-tag-2xfree']\"],\
+    \ \"HR\": [\"//span[contains(text(), 'H&R')]\"], \"PEER_COUNT\": [\"//div[@id='seeder-count']\"\
+    ]}, \"hhanclub.top\": {\"FREE\": [\"//div[@class='whitespace-nowrap']/span[@class='promotion-tag\
+    \ promotion-tag-free']\"], \"2XFREE\": [\"//div[@class='whitespace-nowrap']/span[@class='promotion-tag\
+    \ promotion-tag-2xfree']\"], \"HR\": [\"//span[contains(text(), 'H&R')]\"], \"\
+    PEER_COUNT\": [\"//div[@id='seeder-count']\"]}, \"xp.m-team.io\": {\"FREE\": [\"\
+    //h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [], \"HR\": [], \"PEER_COUNT\"\
+    : [\"//div[@id='peercount']/b[1]\"]}, \"ubits.club\": {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"\
+    ], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"], \"HR\": [\"//h1[@align='center']/img[@title='H&R']\"\
+    ], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"haidan.video\": {\"FREE\"\
+    : [\"//div[@class='torrent']/div/div/div/div/div[@class='torrent_name_wrap']/div/div[@class='sp']/img[@class='pro_free']\"\
+    ], \"2XFREE\": [], \"HR\": [], \"PEER_COUNT\": []}, \"hdarea.club\": {\"FREE\"\
+    : [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
+    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"discfan.net\"\
+    : {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [], \"HR\"\
+    : [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"rousi.zip\": {\"FREE\"\
+    : [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
+    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"hdfans.org\"\
+    : {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
+    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"ptcafe.club\"\
+    : {\"FREE\": [\"//h1[@id='top']/b/font[@class='pro_free']\"], \"2XFREE\": [\"\
+    //h1[@id='top']/b/font[@class='pro_free2up']\"], \"HR\": [], \"PEER_COUNT\": [\"\
+    //div[@id='peercount']/b[1]\"]}, \"hdfun.me\": {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"\
+    ], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"], \"HR\": [], \"\
+    PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"hdvbits.com\": {\"FREE\":\
+    \ [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
+    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"skyey2.com\"\
+    : {\"FREE\": [\"//div[@class='pi']/b[contains(text(),'FREE')]\"], \"2XFREE\":\
+    \ [], \"HR\": [], \"PEER_COUNT\": []}, \"ptlsp.com\": {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"\
+    ], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"], \"HR\": [\"//h1[@id='top']/img[@class='hitandrun']\"\
+    ], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"pandapt.net\": {\"FREE\"\
+    : [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
+    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"star-space.net\"\
+    : {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
+    ], \"HR\": [\"//h1[@id='top']/img[@class='hitandrun']\"], \"PEER_COUNT\": [\"\
+    //div[@id='peercount']/b[1]\"]}}"
