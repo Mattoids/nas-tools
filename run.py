@@ -32,6 +32,7 @@ from app.db import init_db, update_db, init_data
 from app.helper import init_chrome
 from initializer import update_config, check_config,  start_config_monitor, stop_config_monitor
 from version import APP_VERSION
+from app.helper.sites import SitesHelper
 
 
 def sigal_handler(num, stack):
@@ -101,6 +102,8 @@ def init_system():
 
 def start_service():
     log.console("开始启动服务...")
+    log.info(f"{SitesHelper().auth_version}")
+    log.info(f"{SitesHelper().indexer_version}")
     # 启动服务
     WebAction.start_service()
     # 用户认证
