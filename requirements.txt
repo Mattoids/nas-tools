@@ -112,3 +112,6 @@ websockets==10.3
 Werkzeug==2.2.3
 wsproto==1.2.0
 zhconv==1.4.3
+pydantic~=1.10.8
+fastapi~=0.96.0
+passlib~=1.7.4

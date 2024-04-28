@@ -221,3 +221,6 @@ class Config(object):
         if category:
             return os.path.join(Config().get_config_path(), f"{category}.yaml")
         return None
+
+    def get_user_sites_bin_path(self):
+        return os.path.join(self.get_root_path(), "web", "backend", "user.sites.bin")

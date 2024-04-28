@@ -15,3 +15,4 @@ from .redis_helper import RedisHelper
 from .rss_helper import RssHelper
 from .plugin_helper import PluginHelper
 from .indexer_helper import IndexerHelper, IndexerConf
+from .sites import SitesHelper
