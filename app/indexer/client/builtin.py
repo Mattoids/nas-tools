@@ -87,6 +87,7 @@ class BuiltinIndexer(_IIndexClient):
                                             public=False,
                                             proxy=site.get("proxy"),
                                             apikey=site.get("apikey"),
+                                            authorization=site.get("authorization"),
                                             render=False if not chrome_ok else site.get("chrome"))
             if not indexer:
                 indexer = self.user.get_indexer(url=url,
@@ -100,6 +101,7 @@ class BuiltinIndexer(_IIndexClient):
                                          proxy=site.get("proxy"),
                                          render=False if not chrome_ok else site.get("chrome"))
                 indexer.apikey = site.get("apikey")
+                indexer.authorization = site.get("authorization")
         return indexer
 
     def get_indexers(self, check=True, public=True, plugins=True):
@@ -126,6 +128,7 @@ class BuiltinIndexer(_IIndexClient):
                                                   public=False,
                                                   proxy=site.get("proxy"),
                                                   apikey=site.get("apikey"),
+                                                  authorization=site.get("authorization"),
                                                   render=render)
             if indexer:
                 if check and (not indexer_sites or indexer.id not in indexer_sites):
@@ -147,6 +150,7 @@ class BuiltinIndexer(_IIndexClient):
                                                 render=render)
                 if indexer:
                     indexer.apikey = site.get('apikey')
+                    indexer.authorization = site.get('authorization')
                     if check and (not indexer_sites or indexer.id not in indexer_sites):
                         continue
                     if indexer.domain not in _indexer_domains:

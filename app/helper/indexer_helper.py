@@ -33,7 +33,8 @@ class IndexerHelper:
                     render=None,
                     language=None,
                     pri=None,
-                    apikey=None):
+                    apikey=None,
+                    authorization=None):
         self.init_config()
         if not url:
             return None
@@ -54,7 +55,8 @@ class IndexerHelper:
                                    builtin=True,
                                    language=language,
                                    pri=pri,
-                                   apikey=apikey)
+                                   apikey=apikey,
+                                   authorization=authorization)
         return None
 
 
@@ -74,7 +76,8 @@ class IndexerConf(object):
                  builtin=True,
                  language=None,
                  pri=None,
-                 apikey=None):
+                 apikey=None,
+                 authorization=None):
         if not datas:
             return
         # ID
@@ -116,3 +119,4 @@ class IndexerConf(object):
         # 索引器优先级
         self.pri = pri if pri else 0
         self.apikey = apikey
+        self.authorization = authorization

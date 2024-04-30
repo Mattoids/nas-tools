@@ -25,7 +25,8 @@ class MTeamApi:
             "Content-Type": "application/json; charset=UTF-8",
             "User-Agent": site_info.get("ua"),
             "x-api-key": site_info.get("apikey"),
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Authorization": site_info.get("authorization")
         }
         res = RequestUtils(headers=headers,
                            proxies=Config().get_proxies() if site_info.get("proxy") else None
@@ -61,6 +62,7 @@ class MTeamApi:
                 "Accept": "application/json",
                 "User-Agent": site_info.get("ua"),
                 "x-api-key": site_info.get("apikey"),
+                "Authorization": site_info.get("authorization")
             },
             proxies=Config().get_proxies() if site_info.get("proxy") else None,
             timeout=30
@@ -82,7 +84,7 @@ class MTeamApi:
 
     # 拉取馒头字幕列表
     @staticmethod
-    def get_subtitle_list(base_url, torrentid, ua, apikey):
+    def get_subtitle_list(base_url, torrentid, ua, apikey, authorization):
         subtitle_list = []
         site_url = "%s/api/subtitle/list" % base_url
         res = RequestUtils(
@@ -90,7 +92,8 @@ class MTeamApi:
                 'x-api-key': apikey,
                 "Content-Type": "application/x-www-form-urlencoded",
                 "User-Agent": ua,
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "Authorization": authorization
             },
             timeout=30
         ).post_res(url=site_url, data=("id=%d" % torrentid))
@@ -115,7 +118,7 @@ class MTeamApi:
 
     # 下载单个馒头字幕
     @staticmethod
-    def download_single_subtitle(base_url, torrentid, subtitle_info, ua, apikey, download_dir):
+    def download_single_subtitle(base_url, torrentid, subtitle_info, ua, apikey, authorization, download_dir):
         subtitle_id = int(subtitle_info.get("id"))
         filename = subtitle_info.get("filename")
         # log.info(f"【Sites】开始下载馒头{torrentid}字幕 {filename}")
@@ -125,7 +128,8 @@ class MTeamApi:
                 'x-api-key': apikey,
                 "Content-Type": "application/x-www-form-urlencoded",
                 "User-Agent": ua,
-                "Accept": "*/*"
+                "Accept": "*/*",
+                "Authorization": authorization
             },
             timeout=30
         ).get_res(site_url)
@@ -176,7 +180,7 @@ class MTeamApi:
 
     # 下载馒头字幕
     @staticmethod
-    def download_subtitle(media_info, site_id, cookie, ua, apikey, download_dir):
+    def download_subtitle(media_info, site_id, cookie, ua, apikey, download_dir, authorization):
         addr = parse.urlparse(media_info.page_url)
         log.info(f"【Sites】下载馒头字幕 {media_info.page_url}")
         # /detail/770**
@@ -189,14 +193,14 @@ class MTeamApi:
             log.warn(f"【MTeanApi】 获取馒头字幕失败, 未设置站点Api-Key")
             return
         base_url = StringUtils.get_base_url(media_info.page_url)
-        subtitle_list = MTeamApi.get_subtitle_list(base_url, torrentid, ua, apikey)
+        subtitle_list = MTeamApi.get_subtitle_list(base_url, torrentid, ua, apikey, authorization)
         # 下载所有字幕文件
         for subtitle_info in subtitle_list:
-            MTeamApi.download_single_subtitle(base_url, torrentid, subtitle_info, ua, apikey, download_dir)
+            MTeamApi.download_single_subtitle(base_url, torrentid, subtitle_info, ua, apikey, authorization, download_dir)
 
     # 检查m-team种子属性
     @staticmethod
-    def check_torrent_attr(torrent_url, ua=None, apikey=None, proxy=False):
+    def check_torrent_attr(torrent_url, ua=None, apikey=None, authorization=None, proxy=False):
         ret_attr = {
             "free": False,
             "2xfree": False,
@@ -221,7 +225,8 @@ class MTeamApi:
                 'x-api-key': apikey,
                 "Content-Type": "application/x-www-form-urlencoded",
                 "User-Agent": ua,
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "Authorization": authorization
             },
             proxies=proxy,
             timeout=30

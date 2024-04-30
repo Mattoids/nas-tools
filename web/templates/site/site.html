@@ -196,13 +196,20 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-lg-12">
-            <div class="mb-3">
-              <label class="form-label">Api-Key <span class="form-help"
-                                                         title="站点签到/数据获取/搜索请求时使用的api-key，一些网站必须用api-key拉取数据，如新版mt" data-bs-toggle="tooltip">?</span></label>
-              <input type="text" class="form-control" id="site_apikey" value="" placeholder="站点访问Api-Key">
+            <div class="col-lg-6">
+                <div class="mb-3">
+                  <label class="form-label">Authorization <span class="form-help"
+                                                             title="在开发人员工具，网络请求头中获取Authorization，仅个别站点需要" data-bs-toggle="tooltip">?</span></label>
+                  <input type="text" class="form-control" id="site_authorization" value="" placeholder="请求头(Authorization)">
+                </div>
             </div>
-          </div>
+            <div class="col-lg-6">
+                <div class="mb-3">
+                  <label class="form-label">Api-Key <span class="form-help"
+                                                             title="站点签到/数据获取/搜索请求时使用的api-key，一些网站必须用api-key拉取数据，如新版mt" data-bs-toggle="tooltip">?</span></label>
+                  <input type="text" class="form-control" id="site_apikey" value="" placeholder="站点访问Api-Key">
+                </div>
+            </div>
         </div>
         <div class="row">
           <div class="col-lg-4">
@@ -479,6 +486,7 @@
     $("#site_rule").val('');
     $("#site_ua").val('');
     $("#site_apikey").val('');
+    $("#site_authorization").val('');
     $("#site_chrome").val('N');
     $("#site_proxy").val('N');
     $("#site_parse").val('Y');
@@ -507,6 +515,7 @@
         $("#site_cookie").val(ret.site.cookie);
         $("#site_ua").val(ret.site.ua);
         $("#site_apikey").val(ret.site.apikey);
+        $("#site_authorization").val(ret.site.authorization);
         $("#site_download_setting").val(ret.site.download_setting);
         if (ret.site.parse) {
           $("#site_parse").val("Y");
@@ -605,6 +614,7 @@
     };
     let ua = $("#site_ua").val();
     let apikey = $("#site_apikey").val();
+    let authorization = $("#site_authorization").val();
     let chrome = $("#site_chrome").val();
     let proxy = $("#site_proxy").val();
     let subtitle = $("#site_subtitle").val();
@@ -644,6 +654,7 @@
         "parse": site_parse,
         "ua": ua,
         "apikey": apikey,
+        "authorization": authorization,
         "chrome": chrome,
         "proxy": proxy,
         "message": site_unread_msg_notify,

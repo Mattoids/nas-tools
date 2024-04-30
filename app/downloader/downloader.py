@@ -341,6 +341,7 @@ class Downloader:
                     cookie=site_info.get("cookie"),
                     ua=site_info.get("ua"),
                     apikey=site_info.get("apikey"),
+                    authorization=site_info.get("authorization"),
                     referer=page_url if site_info.get("referer") else None,
                     proxy=proxy if proxy is not None else site_info.get("proxy")
                 )
