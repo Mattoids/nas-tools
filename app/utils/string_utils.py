@@ -574,3 +574,13 @@ class StringUtils:
         if re.search(pattern="^[0-9]+$", string=string):
             return True
         return False
+
+    @staticmethod
+    def is_string_and_not_empty(word):
+        """
+        判断是否是字符串并且字符串是否为空
+        """
+        if isinstance(word, str) and word.strip():
+            return True
+        else:
+            return False
