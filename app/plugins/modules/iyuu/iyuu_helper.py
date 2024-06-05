@@ -4,7 +4,7 @@ import time
 
 from app.utils import RequestUtils
 from app.utils.commons import singleton
-
+import log
 
 @singleton
 class IyuuHelper(object):
@@ -12,6 +12,7 @@ class IyuuHelper(object):
     _api_base = "http://api.bolahg.cn/%s"
     _sites = {}
     _token = None
+    _sid_sha1 = None
 
     def __init__(self, token):
         self._token = token
@@ -75,10 +76,10 @@ class IyuuHelper(object):
             ret = RequestUtils(
                 accept_type="application/json",
                 headers={'token': self._token}
-            ).post_res(f"{url}", data=params)
+            ).post_res(f"{url}", json=params)
         if ret:
             result = ret.json()
-            if result.get('ret') == 200:
+            if result.get('code') == 0:
                 return result.get('data'), ""
             else:
                 return None, f"请求IYUU失败，状态码：{result.get('ret')}，返回信息：{result.get('msg')}"
@@ -118,7 +119,7 @@ class IyuuHelper(object):
             }
         }
         """
-        result, msg = self.__request_iyuu(url=self._api_base % 'App.Api.Sites')
+        result, msg = self.__request_iyuu_dev(url='https://dev.iyuu.cn/reseed/sites/index')
         if result:
             ret_sites = {}
             sites = result.get('sites') or []
@@ -128,6 +129,21 @@ class IyuuHelper(object):
         else:
             print(msg)
             return {}
+
+    def __report_existing(self):
+        """
+        汇报辅种的站点
+        :return:
+        """
+        if not self._sites:
+            self._sites = self.__get_sites()
+        sid_list = list(self._sites.keys())
+        result, msg = self.__request_iyuu_dev(url='https://dev.iyuu.cn/reseed/sites/reportExisting',
+                                          method='post',
+                                          params={"sid_list": sid_list})
+        if result:
+            return result.get('sid_sha1')
+        return None
 
     def get_seed_info(self, info_hashs: list):
         """
@@ -150,15 +166,20 @@ class IyuuHelper(object):
             "version": "1.0.0"
         }
         """
+        if not self._sid_sha1:
+            self._sid_sha1 = self.__report_existing()
         info_hashs.sort()
         json_data = json.dumps(info_hashs, separators=(',', ':'), ensure_ascii=False)
         sha1 = self.get_sha1(json_data)
-        result, msg = self.__request_iyuu(url='http://api.bolahg.cn/reseed/index/index',
+        result, msg = self.__request_iyuu_dev(url='https://dev.iyuu.cn/reseed/index/index',
                                           method="post",
                                           params={
                                               "timestamp": time.time(),
                                               "hash": json_data,
-                                              "sha1": sha1
+                                              "sha1": sha1,
+                                              "sid_sha1": self._sid_sha1,
+                                              "timestamp": int(time.time()),
+                                              "version": "8.2.0"
                                           })
         return result, msg
 
