@@ -9,7 +9,7 @@ from app.utils.commons import singleton
 @singleton
 class IyuuHelper(object):
     _version = "2.0.0"
-    _api_base = "https://api.iyuu.cn/%s"
+    _api_base = "https://dev.iyuu.cn/%s"
     _sites = {}
     _token = None
 
@@ -35,11 +35,13 @@ class IyuuHelper(object):
         # 开始请求
         if method == "get":
             ret = RequestUtils(
-                accept_type="application/json"
+                accept_type="application/json",
+                headers={'token': self._token}
             ).get_res(f"{url}", params=params)
         else:
             ret = RequestUtils(
-                accept_type="application/json"
+                accept_type="application/json",
+                headers={'token': self._token}
             ).post_res(f"{url}", data=params)
         if ret:
             result = ret.json()
