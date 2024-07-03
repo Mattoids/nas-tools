@@ -6,15 +6,16 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from app.helper import IndexerHelper
+from app.helper import IndexerHelper, RssHelper
 from app.indexer import Indexer
 from app.plugins.modules._base import _IPluginModule
 from app.sites import Sites
-from app.utils import RequestUtils
+from app.utils import RequestUtils, StringUtils
 from app.utils.types import EventType
 from app.plugins import EventHandler
 from config import Config
-from web.backend.user import User
+from web.backend.user_pro import UserPro
+import log
 
 class CookieCloud(_IPluginModule):
     # 插件名称
@@ -52,10 +53,16 @@ class CookieCloud(_IPluginModule):
     _onlyonce = False
     # 通知
     _notify = False
+    # 订阅
+    _subscribe = False
+    # 刷流
+    _brush = False
     # 退出事件
     _event = Event()
     # 需要忽略的Cookie
     _ignore_cookies = ['CookieAutoDeleteBrowsingDataCleanup']
+    _white_list = None
+    _domain_white_list = []
 
     @staticmethod
     def get_fields():
@@ -132,6 +139,47 @@ class CookieCloud(_IPluginModule):
                     # 同一行
                     [
                         {
+                            'title': '订阅',
+                            'required': "",
+                            'tooltip': '打开后新增站点默认开启订阅选项',
+                            'type': 'switch',
+                            'id': 'subscribe',
+                        },
+                        {
+                            'title': '刷流',
+                            'required': "",
+                            'tooltip': '打开后新增站点默认开启刷流选项',
+                            'type': 'switch',
+                            'id': 'brush',
+                        }
+                    ]
+                ]
+            },
+            {
+                'type': 'div',
+                'content': [
+                    [
+                        {
+                            'title': '白名单列表',
+                            'required': "",
+                            'tooltip': '白名单列表（以","或换行分隔）',
+                            'type': 'textarea',
+                            'content':
+                                {
+                                    'id': 'white_list',
+                                    'placeholder': '',
+                                    'rows': 5
+                                }
+                        }
+                    ]
+                ]
+            },
+            {
+                'type': 'div',
+                'content': [
+                    # 同一行
+                    [
+                        {
                             'title': '运行时通知',
                             'required': "",
                             'tooltip': '运行任务后会发送通知（需要打开插件消息通知）',
@@ -147,7 +195,7 @@ class CookieCloud(_IPluginModule):
                         }
                     ]
                 ]
-            }
+            },
         ]
 
     def init_config(self, config=None):
@@ -162,7 +210,15 @@ class CookieCloud(_IPluginModule):
             self._password = config.get("password")
             self._notify = config.get("notify")
             self._onlyonce = config.get("onlyonce")
+            self._brush = config.get("brush")
+            self._subscribe = config.get("subscribe")
+            self._white_list = config.get("white_list", "") or ""
             self._req = RequestUtils(content_type="application/json")
+
+            if (self._white_list):
+                for url in ','.json(self._white_list.split('\n')).split(','):
+                    self._domain_white_list.append(StringUtils.get_url_domain(url))
+
             if self._server:
                 if not self._server.startswith("http"):
                     self._server = "http://%s" % self._server
@@ -191,6 +247,7 @@ class CookieCloud(_IPluginModule):
                     "password": self._password,
                     "notify": self._notify,
                     "onlyonce": self._onlyonce,
+                    "white_list": self._white_list
                 })
 
             # 周期运行
@@ -288,17 +345,26 @@ class CookieCloud(_IPluginModule):
                 # 查询是否在索引器范围
                 indexer_info = IndexerHelper().get_indexer(url=domain_url)
                 if not indexer_info:
-                    indexer_info = User().get_indexer(url=domain_url)
+                    indexer_info = UserPro().get_indexer(url=domain_url)
 
-                if indexer_info:
+                if indexer_info or (domain_url in self._domain_white_list):
+                    rss_uses = ''
+                    rss_url, errmsg = RssHelper().get_rss_link(url=indexer_info.domain, cookie=cookie_str)
+                    if rss_url and self._brush:
+                        if self._subscribe:
+                            rss_uses += 'D'
+                        rss_uses += 'S'
+
                     # 支持则新增站点
+                    rss_uses += 'T'
                     site_pri = self.sites.get_max_site_pri() + 1
                     self.sites.add_site(
                         name=indexer_info.name,
                         site_pri=site_pri,
                         signurl=indexer_info.domain,
                         cookie=cookie_str,
-                        rss_uses='T'
+                        rssurl=rss_url,
+                        rss_uses=rss_uses
                     )
                     add_count += 1
         # 发送消息

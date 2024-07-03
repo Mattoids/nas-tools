@@ -9,7 +9,7 @@ from app.utils.commons import singleton
 @singleton
 class IyuuHelper(object):
     _version = "2.0.0"
-    _api_base = "https://api.iyuu.cn/%s"
+    _api_base = "http://api.bolahg.cn/%s"
     _sites = {}
     _token = None
 
@@ -118,7 +118,7 @@ class IyuuHelper(object):
         info_hashs.sort()
         json_data = json.dumps(info_hashs, separators=(',', ':'), ensure_ascii=False)
         sha1 = self.get_sha1(json_data)
-        result, msg = self.__request_iyuu(url=self._api_base % 'App.Api.Infohash',
+        result, msg = self.__request_iyuu(url='http://api.bolahg.cn/reseed/index/index',
                                           method="post",
                                           params={
                                               "timestamp": time.time(),

@@ -17,7 +17,8 @@ from app.sites import Sites
 from app.utils import StringUtils
 from app.utils.types import SearchType, IndexerType, ProgressKey, SystemConfigKey
 from config import Config
-from web.backend.user import User
+from web.backend.user_pro import UserPro
+from web.backend.user_pro import UserPro
 
 
 class BuiltinIndexer(_IIndexClient):
@@ -47,7 +48,7 @@ class BuiltinIndexer(_IIndexClient):
         self.sites = Sites()
         self.progress = ProgressHelper()
         self.dbhelper = DbHelper()
-        self.user = User()
+        self.user = UserPro()
         self.chromehelper = ChromeHelper()
         self.systemconfig = SystemConfig()
         self._show_more_sites = Config().get_config("laboratory").get('show_more_sites')
@@ -76,32 +77,18 @@ class BuiltinIndexer(_IIndexClient):
 
         site = self.sites.get_sites(siteurl=url)
         if site:
-            site_url = url
-            indexer = IndexerHelper().get_indexer(url=site_url,
-                                            siteid=site.get("id"),
-                                            cookie=site.get("cookie"),
-                                            ua=site.get("ua"),
-                                            name=site.get("name"),
-                                            rule=site.get("rule"),
-                                            pri=site.get('pri'),
-                                            public=False,
-                                            proxy=site.get("proxy"),
-                                            apikey=site.get("apikey"),
-                                            authorization=site.get("authorization"),
-                                            render=False if not chrome_ok else site.get("chrome"))
-            if not indexer:
-                indexer = self.user.get_indexer(url=url,
-                                         siteid=site.get("id"),
-                                         cookie=site.get("cookie"),
-                                         ua=site.get("ua"),
-                                         name=site.get("name"),
-                                         rule=site.get("rule"),
-                                         pri=site.get('pri'),
-                                         public=False,
-                                         proxy=site.get("proxy"),
-                                         render=False if not chrome_ok else site.get("chrome"))
-                indexer.apikey = site.get("apikey")
-                indexer.authorization = site.get("authorization")
+            indexer = self.user.get_indexer(url=url,
+                                     siteid=site.get("id"),
+                                     cookie=site.get("cookie"),
+                                     ua=site.get("ua"),
+                                     name=site.get("name"),
+                                     rule=site.get("rule"),
+                                     pri=site.get('pri'),
+                                     public=False,
+                                     proxy=site.get("proxy"),
+                                     apikey=site.get("apikey"),
+                                     authorization=site.get("authorization"),
+                                     render=False if not chrome_ok else site.get("chrome"))
         return indexer
 
     def get_indexers(self, check=True, public=True, plugins=True):
@@ -117,19 +104,19 @@ class BuiltinIndexer(_IIndexClient):
             cookie = site.get("cookie")
             if not url or not cookie:
                 continue
+
             render = False if not chrome_ok else site.get("chrome")
-            indexer = IndexerHelper().get_indexer(url=url,
-                                                  siteid=site.get("id"),
-                                                  cookie=cookie,
-                                                  ua=site.get("ua"),
-                                                  name=site.get("name"),
-                                                  rule=site.get("rule"),
-                                                  pri=site.get('pri'),
-                                                  public=False,
-                                                  proxy=site.get("proxy"),
-                                                  apikey=site.get("apikey"),
-                                                  authorization=site.get("authorization"),
-                                                  render=render)
+            indexer = self.user.get_indexer(url=url,
+                                            siteid=site.get("id"),
+                                            cookie=cookie,
+                                            ua=site.get("ua"),
+                                            name=site.get("name"),
+                                            rule=site.get("rule"),
+                                            pri=site.get('pri'),
+                                            public=False,
+                                            proxy=site.get("proxy"),
+                                            authorization=site.get("authorization"),
+                                            render=render)
             if indexer:
                 if check and (not indexer_sites or indexer.id not in indexer_sites):
                     continue
@@ -137,26 +124,6 @@ class BuiltinIndexer(_IIndexClient):
                     _indexer_domains.append(indexer.domain)
                     indexer.name = site.get("name")
                     ret_indexers.append(indexer)
-            else:
-                indexer = self.user.get_indexer(url=url,
-                                                siteid=site.get("id"),
-                                                cookie=cookie,
-                                                ua=site.get("ua"),
-                                                name=site.get("name"),
-                                                rule=site.get("rule"),
-                                                pri=site.get('pri'),
-                                                public=False,
-                                                proxy=site.get("proxy"),
-                                                render=render)
-                if indexer:
-                    indexer.apikey = site.get('apikey')
-                    indexer.authorization = site.get('authorization')
-                    if check and (not indexer_sites or indexer.id not in indexer_sites):
-                        continue
-                    if indexer.domain not in _indexer_domains:
-                        _indexer_domains.append(indexer.domain)
-                        indexer.name = site.get("name")
-                        ret_indexers.append(indexer)
         # 公开站点
         show_more_sites = Config().get_config("laboratory").get('show_more_sites')
         if public and show_more_sites:
