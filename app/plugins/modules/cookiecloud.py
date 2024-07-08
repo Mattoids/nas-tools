@@ -144,6 +144,7 @@ class CookieCloud(_IPluginModule):
                             'tooltip': '打开后新增站点默认开启订阅选项',
                             'type': 'switch',
                             'id': 'subscribe',
+                            'default': True
                         },
                         {
                             'title': '刷流',
@@ -151,6 +152,21 @@ class CookieCloud(_IPluginModule):
                             'tooltip': '打开后新增站点默认开启刷流选项',
                             'type': 'switch',
                             'id': 'brush',
+                            'default': True
+                        },
+                        {
+                            'title': '运行时通知',
+                            'required': "",
+                            'tooltip': '运行任务后会发送通知（需要打开插件消息通知）',
+                            'type': 'switch',
+                            'id': 'notify',
+                        },
+                        {
+                            'title': '立即运行一次',
+                            'required': "",
+                            'tooltip': '打开后立即运行一次（点击此对话框的确定按钮后即会运行，周期未设置也会运行），关闭后将仅按照定时周期运行（同时上次触发运行的任务如果在运行中也会停止）',
+                            'type': 'switch',
+                            'id': 'onlyonce',
                         }
                     ]
                 ]
@@ -173,29 +189,7 @@ class CookieCloud(_IPluginModule):
                         }
                     ]
                 ]
-            },
-            {
-                'type': 'div',
-                'content': [
-                    # 同一行
-                    [
-                        {
-                            'title': '运行时通知',
-                            'required': "",
-                            'tooltip': '运行任务后会发送通知（需要打开插件消息通知）',
-                            'type': 'switch',
-                            'id': 'notify',
-                        },
-                        {
-                            'title': '立即运行一次',
-                            'required': "",
-                            'tooltip': '打开后立即运行一次（点击此对话框的确定按钮后即会运行，周期未设置也会运行），关闭后将仅按照定时周期运行（同时上次触发运行的任务如果在运行中也会停止）',
-                            'type': 'switch',
-                            'id': 'onlyonce',
-                        }
-                    ]
-                ]
-            },
+            }
         ]
 
     def init_config(self, config=None):
@@ -343,9 +337,7 @@ class CookieCloud(_IPluginModule):
                     update_count += 1
             else:
                 # 查询是否在索引器范围
-                indexer_info = IndexerHelper().get_indexer(url=domain_url)
-                if not indexer_info:
-                    indexer_info = UserPro().get_indexer(url=domain_url)
+                indexer_info = UserPro().get_indexer(url=domain_url)
 
                 if indexer_info or (domain_url in self._domain_white_list):
                     rss_uses = ''

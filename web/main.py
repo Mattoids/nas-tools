@@ -47,6 +47,7 @@ from web.action import WebAction
 from web.apiv1 import apiv1_bp
 from web.backend.WXBizMsgCrypt3 import WXBizMsgCrypt
 from web.backend.user import User
+from web.backend.user_pro import UserPro
 from web.backend.wallpaper import get_login_wallpaper
 from web.backend.web_utils import WebUtils
 from web.security import require_auth
@@ -100,7 +101,7 @@ def add_header(r):
 # 定义获取登录用户的方法
 @LoginManager.user_loader
 def load_user(user_id):
-    return User().get(user_id)
+    return UserPro().get(user_id)
 
 
 # 页面不存在
@@ -183,7 +184,7 @@ def login():
         remember = request.form.get('remember')
         if not username:
             return redirect_to_login('请输入用户名')
-        user_info = User().get_user(username)
+        user_info = UserPro().get_user(username)
         if not user_info:
             return redirect_to_login('用户名或密码错误')
         # 校验密码
@@ -296,7 +297,7 @@ def search():
     # 权限
     if current_user.is_authenticated:
         username = current_user.username
-        pris = User().get_user(username).get("pris")
+        pris = UserPro().get_user(username).get("pris")
     else:
         pris = ""
     # 结果

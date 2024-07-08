@@ -1775,9 +1775,9 @@ class WebAction:
             pris = data.get("pris")
             if isinstance(pris, list):
                 pris = ",".join(pris)
-            ret = User().add_user(name, password, pris)
+            ret = UserPro().add_user(name, password, pris)
         else:
-            ret = User().delete_user(name)
+            ret = UserPro().delete_user(name)
 
         if ret == 1 or ret:
             return {"code": 0, "success": False}
@@ -4007,7 +4007,7 @@ class WebAction:
         """
         查询所有用户
         """
-        user_list = User().get_users()
+        user_list = UserPro().get_users()
         Users = []
         for user in user_list:
             pris = str(user.PRIS).split(",")

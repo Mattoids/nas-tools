@@ -8,8 +8,8 @@ from base64 import b64decode
 import log
 from app.helper import DbHelper, IndexerConf
 from config import Config
-from app.conf import ModuleConf
-from app.utils import StringUtils
+from app.conf import ModuleConf, SystemConfig
+from app.utils import StringUtils, ExceptionUtils
 from web.backend.user import User
 
 MENU_CONF = {
@@ -126,6 +126,8 @@ class UserPro(UserMixin):
     _user_sites = {}
     _public_sites = []
     _brush_conf = {}
+    _brush_conf_plugin = {}
+    _indexers = []
 
     def __init__(self, user=None):
         self.dbhelper = DbHelper()
@@ -149,7 +151,12 @@ class UserPro(UserMixin):
         user_sites, public_sites, brush_conf = self.__parse_users_sites(Config().get_user_sites_bin_path())
         self._user_sites = user_sites
         self._public_sites = public_sites
-        self._brush_conf = brush_conf
+        self._brush_conf = {**(SystemConfig().get("plugin.CustomBrush") or {}), **brush_conf}
+        try:
+            for inexer in DbHelper().get_indexer_custom_site():
+                self._indexers.append(json.loads(inexer.INDEXER))
+        except Exception as err:
+            ExceptionUtils.exception_traceback(err)
 
     def verify_password(self, password):
         """
@@ -318,6 +325,8 @@ class UserPro(UserMixin):
                     pri=None,
                     public=None,
                     proxy=None,
+                    language=None,
+                    parser=None,
                     authorization=None,
                     render=None):
         if not self._user_sites or not StringUtils.is_string_and_not_empty(url):
@@ -326,7 +335,7 @@ class UserPro(UserMixin):
         if not "indexer" in self._user_sites:
             return None
 
-        indexer_list = self._user_sites.get("indexer", [])
+        indexer_list = self._indexers + self._user_sites.get("indexer", [])
         if not indexer_list:
             return None
 
@@ -355,6 +364,8 @@ class UserPro(UserMixin):
                            apikey=apikey,
                            render=render,
                            authorization=authorization,
+                           language=language,
+                           parser=parser,
                            pri=pri)
 
     def get_public_sites(self):
@@ -368,3 +379,6 @@ class UserPro(UserMixin):
             return self._brush_conf
         _, _, brush_conf = self.__parse_users_sites(Config().get_user_sites_bin_path())
         return brush_conf
+
+    def get_authsites(self):
+        return User().get_authsites()

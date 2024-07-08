@@ -96,10 +96,6 @@ class SiteConf:
     def get_grap_conf(self, url=None):
         if not url:
             return self.user.get_brush_conf()
-        # 适配刷流站点
-        for k, v in json.loads(Config().get_config("laboratory").get("site_brush") or "{}").items():
-            if StringUtils.url_equal(k, url):
-                return v
         for k, v in self.user.get_brush_conf().items():
             if StringUtils.url_equal(k, url):
                 return v

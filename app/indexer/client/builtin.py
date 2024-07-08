@@ -201,14 +201,13 @@ class BuiltinIndexer(_IIndexClient):
                     mtype=match_media.type if match_media and match_media.tmdb_info else None)
             elif indexer.parser == "TorrentLeech":
                 error_flag, result_array = TorrentLeech(indexer).search(keyword=search_word)
+            elif PluginsSpider().status(indexer=indexer):
+                error_flag, result_array = PluginsSpider().search(keyword=search_word, indexer=indexer)
             else:
-                if PluginsSpider().status(indexer=indexer):
-                    error_flag, result_array = PluginsSpider().search(keyword=search_word, indexer=indexer)
-                else:
-                    error_flag, result_array = self.__spider_search(
-                        keyword=search_word,
-                        indexer=indexer,
-                        mtype=match_media.type if match_media and match_media.tmdb_info else None)
+                error_flag, result_array = self.__spider_search(
+                    keyword=search_word,
+                    indexer=indexer,
+                    mtype=match_media.type if match_media and match_media.tmdb_info else None)
         except Exception as err:
             error_flag = True
             print(str(err))
@@ -265,14 +264,12 @@ class BuiltinIndexer(_IIndexClient):
         elif indexer.parser == "TorrentLeech":
             error_flag, result_array = TorrentLeech(indexer).search(keyword=keyword,
                                                                     page=page)
+        elif PluginsSpider().status(indexer=indexer):
+            error_flag, result_array = PluginsSpider().search(keyword=keyword, indexer=indexer, page=page)
         else:
-            if PluginsSpider().status(indexer=indexer):
-                error_flag, result_array = PluginsSpider().search(keyword=keyword, indexer=indexer, page=page)
-
-            else:
-                error_flag, result_array = self.__spider_search(indexer=indexer,
-                                                            page=page,
-                                                            keyword=keyword)
+            error_flag, result_array = self.__spider_search(indexer=indexer,
+                                                        page=page,
+                                                        keyword=keyword)
         # 索引花费的时间
         seconds = round((datetime.datetime.now() - start_time).seconds, 1)
 

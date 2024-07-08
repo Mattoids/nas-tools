@@ -61,9 +61,9 @@ class WebUtils:
         try:
             releases_update_only = Config().get_config("app").get("releases_update_only")
             third_version = Config().get_config("app").get("third_version")
-            check_update_url = f"https://nastool.org/{quote(WebUtils.get_current_version())}/update"
-            if third_version:
-                check_update_url = f"https://mattoid.oss-cn-hangzhou.aliyuncs.com/nastool/third_version.txt"
+            if not third_version:
+                return None, None
+            check_update_url = f"https://mattoid.oss-cn-hangzhou.aliyuncs.com/nastool/third_version.txt"
             version_res = RequestUtils(proxies=Config().get_proxies()).get_res(check_update_url)
             if version_res:
                 ver_json = version_res.json()

@@ -95,7 +95,6 @@ class MTSpider(object):
         torrents = []
         if res and res.status_code == 200:
             results = res.json().get('data', {}).get("data") or []
-            log.info(f"{results}")
             for result in results:
                 torrentid = int(result.get('id'))
                 status = result.get('status')

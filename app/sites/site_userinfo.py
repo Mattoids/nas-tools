@@ -118,7 +118,7 @@ class SiteUserInfo(object):
                         if not html_text:
                             return None
                     else:
-                        log.error("【Sites】站点 %s 被反爬限制：%s, 状态码：%s" % (site_name, url, res.status_code))
+                        # log.error("【Sites】站点 %s 被反爬限制：%s, 状态码：%s" % (site_name, url, res.status_code))
                         return None
 
                 # 兼容假首页情况，假首页通常没有 <link rel="search" 属性
