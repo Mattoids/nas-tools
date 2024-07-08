@@ -240,6 +240,8 @@ class CookieCloud(_IPluginModule):
                     "key": self._key,
                     "password": self._password,
                     "notify": self._notify,
+                    "brush": self._brush,
+                    "subscribe": self._subscribe,
                     "onlyonce": self._onlyonce,
                     "white_list": self._white_list
                 })
@@ -340,6 +342,7 @@ class CookieCloud(_IPluginModule):
                 indexer_info = UserPro().get_indexer(url=domain_url)
 
                 if indexer_info or (domain_url in self._domain_white_list):
+                    rss_url = ''
                     rss_uses = ''
                     if self._subscribe or self._brush:
                         rss_url, errmsg = RssHelper().get_rss_link(url=indexer_info.domain, cookie=cookie_str)
