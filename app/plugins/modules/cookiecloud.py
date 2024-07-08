@@ -341,11 +341,12 @@ class CookieCloud(_IPluginModule):
 
                 if indexer_info or (domain_url in self._domain_white_list):
                     rss_uses = ''
-                    rss_url, errmsg = RssHelper().get_rss_link(url=indexer_info.domain, cookie=cookie_str)
-                    if rss_url and self._brush:
-                        if self._subscribe:
-                            rss_uses += 'D'
-                        rss_uses += 'S'
+                    if self._subscribe or self._brush:
+                        rss_url, errmsg = RssHelper().get_rss_link(url=indexer_info.domain, cookie=cookie_str)
+                        if rss_url and self._brush:
+                            if self._subscribe:
+                                rss_uses += 'D'
+                            rss_uses += 'S'
 
                     # 支持则新增站点
                     rss_uses += 'T'
