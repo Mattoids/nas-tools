@@ -151,7 +151,8 @@ class UserPro(UserMixin):
         user_sites, public_sites, brush_conf = self.__parse_users_sites(Config().get_user_sites_bin_path())
         self._user_sites = user_sites
         self._public_sites = public_sites
-        self._brush_conf = {**(SystemConfig().get("plugin.CustomBrush") or {}), **brush_conf}
+        custom_brush = json.loads(json.loads(SystemConfig().get("plugin.CustomBrush") or {}))
+        self._brush_conf = {**custom_brush, **brush_conf}
         try:
             for inexer in DbHelper().get_indexer_custom_site():
                 self._indexers.append(json.loads(inexer.INDEXER))

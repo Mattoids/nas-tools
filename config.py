@@ -223,4 +223,4 @@ class Config(object):
         return None
 
     def get_user_sites_bin_path(self):
-        return  os.path.join(self.get_root_path(), "config", "user.sites.bin")
+        return os.path.join(self.get_root_path(), "config", "user.sites.bin")
