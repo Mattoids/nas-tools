@@ -250,8 +250,8 @@ https://spk7.imnks.com/
    ```
 * 群晖套件版本，ssh到后台运行以下命令，同样修改配置文件路径以及源目录、目的目录参数。
    ```
-   export NASTOOL_CONFIG=/var/packages/NASTool/target/config/config.yaml
-   /var/packages/py3k/target/usr/local/bin/python3 /var/packages/NASTool/target/app/filetransfer.py -m link -s /from/path -d /to/path
+   export NASTOOL_CONFIG=/var/packages/mattoids/target/config/config.yaml
+   /var/packages/py3k/target/usr/local/bin/python3 /var/packages/mattoids/target/app/filetransfer.py -m link -s /from/path -d /to/path
    ```
 * 本地直接运行的，cd 到程序根目录，执行以下命令，修改配置文件、源目录和目的目录参数。
    ```
