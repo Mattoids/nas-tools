@@ -4,18 +4,18 @@ RUN apk add --no-cache --virtual .build-deps \
         gcc \
         musl-dev \
         libxml2-dev \
-        libxslt-dev \
-    && apk add --no-cache $(echo $(wget --no-check-certificate -qO- https://raw.githubusercontent.com/mattoids/nas-tools/master/package_list.txt)) \
-    && ln -sf /usr/bin/python3 /usr/bin/python \
-    && curl https://rclone.org/install.sh | bash \
-    && if [ "$(uname -m)" = "x86_64" ]; then ARCH=amd64; elif [ "$(uname -m)" = "aarch64" ]; then ARCH=arm64; fi \
-    && curl https://dl.min.io/client/mc/release/linux-${ARCH}/mc --create-dirs -o /usr/bin/mc \
-    && chmod +x /usr/bin/mc \
-    && pip install --upgrade pip setuptools wheel \
-    && pip install cython \
-    && pip install -r https://raw.githubusercontent.com/mattoids/nas-tools/master/requirements.txt \
-    && apk del --purge .build-deps \
-    && rm -rf /tmp/* /root/.cache /var/cache/apk/*
+        libxslt-dev
+RUN apk add --no-cache $(echo $(wget --no-check-certificate -qO- https://raw.githubusercontent.com/mattoids/nas-tools/master/package_list.txt))
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+RUN curl https://rclone.org/install.sh | bash
+RUN if [ "$(uname -m)" = "x86_64" ]; then ARCH=amd64; elif [ "$(uname -m)" = "aarch64" ]; then ARCH=arm64; fi
+RUN curl https://dl.min.io/client/mc/release/linux-${ARCH}/mc --create-dirs -o /usr/bin/mc
+RUN chmod +x /usr/bin/mc
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install cython
+RUN pip install -r https://raw.githubusercontent.com/mattoids/nas-tools/master/requirements.txt
+RUN apk del --purge .build-deps
+RUN rm -rf /tmp/* /root/.cache /var/cache/apk/*
 COPY --chmod=755 ./docker/rootfs /
 FROM scratch AS APP
 COPY --from=Builder / /
