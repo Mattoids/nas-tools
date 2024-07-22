@@ -205,40 +205,5 @@ laboratory:
   # 【精确搜索使用英文名称】：开启后对于精确搜索场景（远程搜索、订阅搜索等）将会使用英文名检索站点资源以提升匹配度，但对有些站点资源标题全是中文的则需要关闭，否则匹配不到
   search_en_title: false
   # 站点刷流规则
-  site_brush: "{\"xp.m-team.io\": {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"\
-    ], \"2XFREE\": [], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"\
-    ]}, \"open.cd\": {\"FREE\": [\"//div[@class='whitespace-nowrap']/span[@class='promotion-tag-free']\"\
-    ], \"2XFREE\": [\"//div[@class='whitespace-nowrap']/span[@class='promotion-tag-2xfree']\"\
-    ], \"HR\": [\"//span[contains(text(), 'H&R')]\"], \"PEER_COUNT\": [\"//div[@id='seeder-count']\"\
-    ]}, \"ubits.club\": {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"], \"\
-    2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"], \"HR\": [\"//h1[@align='center']/img[@title='H&R']\"\
-    ], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"discfan.net\": {\"FREE\"\
-    : [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [], \"HR\": [], \"\
-    PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"rousi.zip\": {\"FREE\": [\"\
-    //h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
-    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"hdfans.org\"\
-    : {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
-    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"ptcafe.club\"\
-    : {\"FREE\": [\"//h1[@id='top']/b/font[@class='pro_free']\"], \"2XFREE\": [\"\
-    //h1[@id='top']/b/font[@class='pro_free2up']\"], \"HR\": [], \"PEER_COUNT\": [\"\
-    //div[@id='peercount']/b[1]\"]}, \"hdfun.me\": {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"\
-    ], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"], \"HR\": [], \"\
-    PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"hdarea.club\": {\"FREE\":\
-    \ [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
-    ], \"HR\": [], \"PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"ptlsp.com\"\
-    : {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
-    ], \"HR\": [\"//h1[@id='top']/img[@class='hitandrun']\"], \"PEER_COUNT\": [\"\
-    //div[@id='peercount']/b[1]\"]}, \"pandapt.net\": {\"FREE\": [\"//h1[@id='top']/b/font[@class='free']\"\
-    ], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"], \"HR\": [], \"\
-    PEER_COUNT\": [\"//div[@id='peercount']/b[1]\"]}, \"hhanclub.top\": {\"FREE\"\
-    : [\"//div[@class='whitespace-nowrap']/span[@class='promotion-tag promotion-tag-free']\"\
-    ], \"2XFREE\": [\"//div[@class='whitespace-nowrap']/span[@class='promotion-tag\
-    \ promotion-tag-2xfree']\"], \"HR\": [\"//span[contains(text(), 'H&R')]\"], \"\
-    PEER_COUNT\": [\"//div[@id='seeder-count']\"]}, \"star-space.net\": {\"FREE\"\
-    : [\"//h1[@id='top']/b/font[@class='free']\"], \"2XFREE\": [\"//h1[@id='top']/b/font[@class='twoupfree']\"\
-    ], \"HR\": [\"//h1[@id='top']/img[@class='hitandrun']\"], \"PEER_COUNT\": [\"\
-    //div[@id='peercount']/b[1]\"]}, \"skyey2.com\": {\"FREE\": [\"//div[@class='pi']/b[contains(text(),'FREE')]\"\
-    ], \"2XFREE\": [], \"HR\": [], \"PEER_COUNT\": []}, \"haidan.video\": {\"FREE\"\
-    : [\"//div[@class='torrent']/div/div/div/div/div[@class='torrent_name_wrap']/div/div[@class='sp']/img[@class='pro_free']\"\
-    ], \"2XFREE\": [], \"HR\": [], \"PEER_COUNT\": []}}"
+  site_brush: ""
   show_more_sites: false
