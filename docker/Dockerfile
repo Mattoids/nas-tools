@@ -13,7 +13,7 @@ RUN curl https://dl.min.io/client/mc/release/linux-${ARCH}/mc --create-dirs -o /
 RUN chmod +x /usr/bin/mc
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install cython
-RUN pip install -r https://raw.githubusercontent.com/Mattoids/nas-tools/master/requirements.txt
+RUN pip install -r $(echo $(wget --no-check-certificate -qO- https://raw.githubusercontent.com/Mattoids/nas-tools/master/requirements.txt))
 RUN apk del --purge .build-deps
 RUN rm -rf /tmp/* /root/.cache /var/cache/apk/*
 COPY --chmod=755 ./docker/rootfs /
